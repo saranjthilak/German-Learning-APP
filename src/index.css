@@ -146,6 +146,7 @@ body {
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   * {
-    @apply !animation-none !transition-none;
+    animation: none !important;
+    transition: none !important;
   }
 }

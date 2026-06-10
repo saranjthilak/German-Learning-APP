@@ -1,4 +1,5 @@
 import { UserData, AchievementData, GameSession } from '../types';
+import { getRandomWords } from '../data/vocabulary';
 
 const STORAGE_KEY = 'german-vocab-game-data';
 const DEFAULT_USER_DATA: UserData = {
@@ -200,7 +201,6 @@ export const StorageManager = {
 
     if (!challenge) {
       // Create new daily challenge
-      const { getRandomWords } = require('../data/vocabulary');
       const words = getRandomWords(15);
 
       challenge = {
