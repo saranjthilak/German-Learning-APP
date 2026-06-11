@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { GermanWord, getCategories, getRandomWords, getRandomWordsByCategory } from '../data/vocabulary';
 import { SpeechManager } from '../utils/speech';
 
@@ -127,17 +127,22 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
 
       {/* Flashcard */}
       <div 
-        className="relative w-full h-80 cursor-pointer perspective-1000"
+        className="relative w-full h-80 cursor-pointer"
+        style={{ perspective: '1000px' }}
         onClick={handleFlip}
       >
         <div 
-          className={`relative w-full h-full transition-transform duration-500 transform-style-3d ${
-            isFlipped ? 'rotate-y-180' : ''
-          }`}
-          style={{ transformStyle: 'preserve-3d' }}
+          className="relative w-full h-full transition-transform duration-500"
+          style={{ 
+            transformStyle: 'preserve-3d',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+          }}
         >
           {/* Front */}
-          <div className="absolute w-full h-full backface-hidden">
+          <div 
+            className="absolute w-full h-full"
+            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+          >
             <div className="game-card h-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-8 rounded-lg border-2 border-blue-300 dark:border-blue-700 flex flex-col items-center justify-center">
               <p className="text-sm text-gray-500 dark:text-gray-500 mb-2">German</p>
               <h2 className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-4">{currentWord.german}</h2>
@@ -162,7 +167,14 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
           </div>
 
           {/* Back */}
-          <div className="absolute w-full h-full backface-hidden rotate-y-180">
+          <div 
+            className="absolute w-full h-full"
+            style={{ 
+              backfaceVisibility: 'hidden', 
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg)' 
+            }}
+          >
             <div className="game-card h-full bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 p-8 rounded-lg border-2 border-green-300 dark:border-green-700 flex flex-col items-center justify-center">
               <p className="text-sm text-gray-500 dark:text-gray-500 mb-2">English</p>
               <h2 className="text-5xl font-bold text-green-600 dark:text-green-400 mb-4">{currentWord.english}</h2>
