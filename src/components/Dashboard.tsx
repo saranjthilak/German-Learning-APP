@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserData } from '../types';
 import { StorageManager } from '../utils/storage';
+import { germanVocabulary } from '../data/vocabulary';
 import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
 import DailyChallenge from './DailyChallenge';
@@ -15,6 +16,29 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(0);
   const [showReviewMode, setShowReviewMode] = useState(false);
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
+
+  const TOTAL_WORDS = germanVocabulary.length;
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'review') {
+        setShowReviewMode(true);
+        setShowFlashcardMode(false);
+      } else if (hash === 'flashcard') {
+        setShowFlashcardMode(true);
+        setShowReviewMode(false);
+      } else {
+        setShowReviewMode(false);
+        setShowFlashcardMode(false);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Handle initial load
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     const count = userData.achievements.filter(a => a.unlocked).length;
@@ -40,11 +64,11 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const xpProgress = ((userData.stats.totalXP - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
 
   if (showReviewMode) {
-    return <ReviewMode userData={userData} onClose={() => setShowReviewMode(false)} />;
+    return <ReviewMode userData={userData} onClose={() => window.location.hash = ''} />;
   }
 
   if (showFlashcardMode) {
-    return <FlashcardMode onClose={() => setShowFlashcardMode(false)} />;
+    return <FlashcardMode onClose={() => window.location.hash = ''} />;
   }
 
   return (
@@ -71,7 +95,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
         <div className="game-card stat-box bg-gradient-to-br from-purple-500 to-pink-500">
           <p className="text-sm font-semibold opacity-90">WORDS LEARNED</p>
           <h2 className="text-4xl font-bold my-2">{userData.stats.wordsLearned}</h2>
-          <p className="text-sm">of 540 words</p>
+          <p className="text-sm">of {TOTAL_WORDS} words</p>
         </div>
 
         {/* Accuracy */}
@@ -123,7 +147,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
             </div>
           </div>
           <button
-            onClick={() => setShowReviewMode(true)}
+            onClick={() => window.location.hash = 'review'}
             className="button-primary w-full"
           >
             Start Review
@@ -139,7 +163,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
             Choose a category and practice at your own pace
           </p>
           <button
-            onClick={() => setShowFlashcardMode(true)}
+            onClick={() => window.location.hash = 'flashcard'}
             className="button-primary w-full"
           >
             Start Flashcards
@@ -154,12 +178,12 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-sm font-semibold">Words Learned</span>
-              <span className="text-sm">{userData.stats.wordsLearned} / 540</span>
+              <span className="text-sm">{userData.stats.wordsLearned} / {TOTAL_WORDS}</span>
             </div>
             <div className="progress-bar">
               <div 
                 className="progress-fill bg-gradient-to-r from-blue-500 to-purple-500" 
-                style={{ width: `${(userData.stats.wordsLearned / 540) * 100}%` }}
+                style={{ width: `${(userData.stats.wordsLearned / TOTAL_WORDS) * 100}%` }}
               ></div>
             </div>
           </div>

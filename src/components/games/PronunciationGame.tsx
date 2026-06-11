@@ -8,7 +8,7 @@ interface PronunciationGameProps {
 
 const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
   const [gameStarted, setGameStarted] = useState(false);
   const [words, setWords] = useState<GermanWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -94,7 +94,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   };
 
   if (!gameStarted) {
-    const categories = ['All', ...getCategories()];
+    const categories = getCategories();
     
     return (
       <div className="text-center space-y-6">

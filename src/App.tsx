@@ -33,10 +33,32 @@ const App: React.FC = () => {
     StorageManager.checkStreakResetNeeded();
   }, []);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'settings') {
+        setShowSettings(true);
+        setCurrentGame(null);
+      } else if (hash.startsWith('game-')) {
+        const game = hash.replace('game-', '') as GameType;
+        setCurrentGame(game);
+        setShowSettings(false);
+      } else {
+        setShowSettings(false);
+        setCurrentGame(null);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Handle initial load
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const handleGameComplete = (xpEarned: number, accuracy: number, correctAnswers: number, totalAnswers: number) => {
     const updated = StorageManager.updateStats(xpEarned, accuracy, correctAnswers, totalAnswers, currentGame || '');
     setUserData(updated);
-    setCurrentGame(null);
+    window.location.hash = '';
   };
 
   const handleToggleDarkMode = () => {
@@ -46,7 +68,7 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (showSettings) {
-      return <Settings onClose={() => setShowSettings(false)} userData={userData} />;
+      return <Settings onClose={() => window.location.hash = ''} userData={userData} />;
     }
 
     if (currentGame === 'matching') {
@@ -72,7 +94,7 @@ const App: React.FC = () => {
     return (
       <>
         <Dashboard userData={userData} />
-        <GameMenu onSelectGame={setCurrentGame} />
+        <GameMenu onSelectGame={(game) => window.location.hash = `game-${game}`} />
       </>
     );
   };
@@ -86,7 +108,7 @@ const App: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setShowSettings(!showSettings)}
+              onClick={() => window.location.hash = showSettings ? '' : 'settings'}
               className="text-2xl hover:scale-110 transition-transform"
             >
               ⚙️
@@ -94,7 +116,7 @@ const App: React.FC = () => {
             <ThemeToggle darkMode={darkMode} onToggle={handleToggleDarkMode} />
             {currentGame && (
               <button
-                onClick={() => setCurrentGame(null)}
+                onClick={() => window.location.hash = ''}
                 className="button-secondary"
               >
                 Back

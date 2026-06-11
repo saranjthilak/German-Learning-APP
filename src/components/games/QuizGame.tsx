@@ -13,7 +13,7 @@ interface Question {
 
 const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
   const [gameStarted, setGameStarted] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -81,7 +81,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   };
 
   if (!gameStarted) {
-    const categories = ['All', ...getCategories()];
+    const categories = getCategories();
     
     return (
       <div className="text-center space-y-6">

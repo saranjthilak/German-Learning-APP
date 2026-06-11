@@ -7,7 +7,7 @@ interface FlashcardModeProps {
 }
 
 const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
   const [words, setWords] = useState<GermanWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -45,7 +45,7 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
   };
 
   if (!started) {
-    const categories = ['All', ...getCategories()];
+    const categories = getCategories();
     
     return (
       <div className="text-center space-y-6">

@@ -16,7 +16,7 @@ interface Card {
 
 const MemoryGame: React.FC<MemoryGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
   const [gameStarted, setGameStarted] = useState(false);
   const [cards, setCards] = useState<Card[]>([]);
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
@@ -107,7 +107,7 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onComplete }) => {
   };
 
   if (!gameStarted) {
-    const categories = ['All', ...getCategories()];
+    const categories = getCategories();
     
     return (
       <div className="text-center space-y-6">

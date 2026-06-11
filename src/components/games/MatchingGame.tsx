@@ -7,7 +7,7 @@ interface MatchingGameProps {
 
 const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
   const [gameStarted, setGameStarted] = useState(false);
   const [words, setWords] = useState<GermanWord[]>([]);
   const [englishWords, setEnglishWords] = useState<string[]>([]);
@@ -88,7 +88,7 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
   };
 
   if (!gameStarted) {
-    const categories = ['All', ...getCategories()];
+    const categories = getCategories();
     
     return (
       <div className="text-center space-y-6">

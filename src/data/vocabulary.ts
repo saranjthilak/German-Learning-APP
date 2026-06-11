@@ -474,6 +474,74 @@ export const germanVocabulary: GermanWord[] = [
   { id: 'hl28', german: 'Medizin', english: 'Medicine', pronunciation: 'may-dee-TSEEN', category: 'Health', article: 'die' },
   { id: 'hl29', german: 'Pflaster', english: 'Bandage', pronunciation: 'PLAH-ster', category: 'Health', article: 'das' },
   { id: 'hl30', german: 'Krankenhaus', english: 'Hospital', pronunciation: 'KRAHNKEN-hows', category: 'Health', article: 'das' },
+
+  // Level A1 (15 words)
+  { id: 'a1_1', german: 'Apfel', english: 'Apple', pronunciation: 'AHP-fel', category: 'Level A1', article: 'der' },
+  { id: 'a1_2', german: 'Buch', english: 'Book', pronunciation: 'BOOKH', category: 'Level A1', article: 'das' },
+  { id: 'a1_3', german: 'Tisch', english: 'Table', pronunciation: 'TISH', category: 'Level A1', article: 'der' },
+  { id: 'a1_4', german: 'Haus', english: 'House', pronunciation: 'HOWS', category: 'Level A1', article: 'das' },
+  { id: 'a1_5', german: 'Auto', english: 'Car', pronunciation: 'OW-to', category: 'Level A1', article: 'das' },
+  { id: 'a1_6', german: 'Tür', english: 'Door', pronunciation: 'TUR', category: 'Level A1', article: 'die' },
+  { id: 'a1_7', german: 'Bahnhof', english: 'Train station', pronunciation: 'BAHN-hof', category: 'Level A1', article: 'der' },
+  { id: 'a1_8', german: 'Bett', english: 'Bed', pronunciation: 'BET', category: 'Level A1', article: 'das' },
+  { id: 'a1_9', german: 'Wasser', english: 'Water', pronunciation: 'VAHS-ser', category: 'Level A1', article: 'das' },
+  { id: 'a1_10', german: 'Brot', english: 'Bread', pronunciation: 'BROT', category: 'Level A1', article: 'das' },
+  { id: 'a1_11', german: 'Geld', english: 'Money', pronunciation: 'GELT', category: 'Level A1', article: 'das' },
+  { id: 'a1_12', german: 'Stadt', english: 'City', pronunciation: 'SHTAHT', category: 'Level A1', article: 'die' },
+  { id: 'a1_13', german: 'Name', english: 'Name', pronunciation: 'NAH-me', category: 'Level A1', article: 'der' },
+  { id: 'a1_14', german: 'Straße', english: 'Street', pronunciation: 'SHTRAH-se', category: 'Level A1', article: 'die' },
+  { id: 'a1_15', german: 'Arbeit', english: 'Work', pronunciation: 'AHR-bite', category: 'Level A1', article: 'die' },
+
+  // Level A2 (15 words)
+  { id: 'a2_1', german: 'Beruf', english: 'Profession', pronunciation: 'be-ROOF', category: 'Level A2', article: 'der' },
+  { id: 'a2_2', german: 'Gesundheit', english: 'Health', pronunciation: 'ge-ZOON-hite', category: 'Level A2', article: 'die' },
+  { id: 'a2_3', german: 'Krankheit', english: 'Illness', pronunciation: 'KRAHNG-kite', category: 'Level A2', article: 'die' },
+  { id: 'a2_4', german: 'Urlaub', english: 'Vacation', pronunciation: 'OOR-lowp', category: 'Level A2', article: 'der' },
+  { id: 'a2_5', german: 'Wetter', english: 'Weather', pronunciation: 'VET-ter', category: 'Level A2', article: 'das' },
+  { id: 'a2_6', german: 'Kleidung', english: 'Clothing', pronunciation: 'KLY-doong', category: 'Level A2', article: 'die' },
+  { id: 'a2_7', german: 'Geschäft', english: 'Store/Business', pronunciation: 'ge-SHEFT', category: 'Level A2', article: 'das' },
+  { id: 'a2_8', german: 'Kunde', english: 'Customer', pronunciation: 'KOON-de', category: 'Level A2', article: 'der' },
+  { id: 'a2_9', german: 'Vertrag', english: 'Contract', pronunciation: 'fer-TRAHG', category: 'Level A2', article: 'der' },
+  { id: 'a2_10', german: 'Nachricht', english: 'Message', pronunciation: 'NAHKH-rikht', category: 'Level A2', article: 'die' },
+  { id: 'a2_11', german: 'Erfahrung', english: 'Experience', pronunciation: 'er-FAH-roong', category: 'Level A2', article: 'die' },
+  { id: 'a2_12', german: 'Veranstaltung', english: 'Event', pronunciation: 'fer-AHN-shtahl-toong', category: 'Level A2', article: 'die' },
+  { id: 'a2_13', german: 'Zukunft', english: 'Future', pronunciation: 'TSOO-koonft', category: 'Level A2', article: 'die' },
+  { id: 'a2_14', german: 'Vergangenheit', english: 'Past', pronunciation: 'fer-GAHNG-en-hite', category: 'Level A2', article: 'die' },
+  { id: 'a2_15', german: 'Erfolg', english: 'Success', pronunciation: 'er-FOLK', category: 'Level A2', article: 'der' },
+
+  // Level B1 (15 words)
+  { id: 'b1_1', german: 'Bedingung', english: 'Condition', pronunciation: 'be-DING-oong', category: 'Level B1', article: 'die' },
+  { id: 'b1_2', german: 'Entscheidung', english: 'Decision', pronunciation: 'ent-SHY-doong', category: 'Level B1', article: 'die' },
+  { id: 'b1_3', german: 'Gesellschaft', english: 'Society', pronunciation: 'ge-ZEL-shahft', category: 'Level B1', article: 'die' },
+  { id: 'b1_4', german: 'Umwelt', english: 'Environment', pronunciation: 'OOM-velt', category: 'Level B1', article: 'die' },
+  { id: 'b1_5', german: 'Wirtschaft', english: 'Economy', pronunciation: 'VIRT-shahft', category: 'Level B1', article: 'die' },
+  { id: 'b1_6', german: 'Regierung', english: 'Government', pronunciation: 're-GEE-roong', category: 'Level B1', article: 'die' },
+  { id: 'b1_7', german: 'Wissenschaft', english: 'Science', pronunciation: 'VIS-sen-shahft', category: 'Level B1', article: 'die' },
+  { id: 'b1_8', german: 'Forschung', english: 'Research', pronunciation: 'FOR-shoong', category: 'Level B1', article: 'die' },
+  { id: 'b1_9', german: 'Verbindung', english: 'Connection', pronunciation: 'fer-BIN-doong', category: 'Level B1', article: 'die' },
+  { id: 'b1_10', german: 'Unterstützung', english: 'Support', pronunciation: 'oon-ter-SHTUTS-oong', category: 'Level B1', article: 'die' },
+  { id: 'b1_11', german: 'Voraussetzung', english: 'Prerequisite', pronunciation: 'fo-ROWS-zet-tsoong', category: 'Level B1', article: 'die' },
+  { id: 'b1_12', german: 'Eigenschaft', english: 'Quality', pronunciation: 'I-gen-shahft', category: 'Level B1', article: 'die' },
+  { id: 'b1_13', german: 'Verantwortung', english: 'Responsibility', pronunciation: 'fer-AHNT-vor-toong', category: 'Level B1', article: 'die' },
+  { id: 'b1_14', german: 'Herausforderung', english: 'Challenge', pronunciation: 'hay-ROWS-for-de-roong', category: 'Level B1', article: 'die' },
+  { id: 'b1_15', german: 'Gewohnheit', english: 'Habit', pronunciation: 'ge-VON-hite', category: 'Level B1', article: 'die' },
+
+  // Level B2 (15 words)
+  { id: 'b2_1', german: 'Zusammenhang', english: 'Context', pronunciation: 'tsoo-ZAHM-men-hahng', category: 'Level B2', article: 'der' },
+  { id: 'b2_2', german: 'Auswirkung', english: 'Impact', pronunciation: 'OWS-vir-koong', category: 'Level B2', article: 'die' },
+  { id: 'b2_3', german: 'Bedürfnis', english: 'Need', pronunciation: 'be-DURF-nis', category: 'Level B2', article: 'das' },
+  { id: 'b2_4', german: 'Überzeugung', english: 'Conviction', pronunciation: 'ue-ber-TSOY-goong', category: 'Level B2', article: 'die' },
+  { id: 'b2_5', german: 'Verfügung', english: 'Disposal', pronunciation: 'fer-FU-goong', category: 'Level B2', article: 'die' },
+  { id: 'b2_6', german: 'Rücksicht', english: 'Consideration', pronunciation: 'RUK-zikht', category: 'Level B2', article: 'die' },
+  { id: 'b2_7', german: 'Zweifel', english: 'Doubt', pronunciation: 'TSVY-fel', category: 'Level B2', article: 'der' },
+  { id: 'b2_8', german: 'Fortschritt', english: 'Progress', pronunciation: 'FORT-shrit', category: 'Level B2', article: 'der' },
+  { id: 'b2_9', german: 'Widerspruch', english: 'Contradiction', pronunciation: 'VEE-der-shprookh', category: 'Level B2', article: 'der' },
+  { id: 'b2_10', german: 'Anspruch', english: 'Claim', pronunciation: 'AHN-shprookh', category: 'Level B2', article: 'der' },
+  { id: 'b2_11', german: 'Ressource', english: 'Resource', pronunciation: 're-SOOR-se', category: 'Level B2', article: 'die' },
+  { id: 'b2_12', german: 'Maßnahme', english: 'Measure', pronunciation: 'MAHS-nah-me', category: 'Level B2', article: 'die' },
+  { id: 'b2_13', german: 'Einfluss', english: 'Influence', pronunciation: 'INE-floos', category: 'Level B2', article: 'der' },
+  { id: 'b2_14', german: 'Vorurteil', english: 'Prejudice', pronunciation: 'FOR-oor-tile', category: 'Level B2', article: 'das' },
+  { id: 'b2_15', german: 'Tatsache', english: 'Fact', pronunciation: 'TAHT-zah-khe', category: 'Level B2', article: 'die' },
 ];
 
 export function getWordsByCategory(category: string): GermanWord[] {
@@ -502,7 +570,9 @@ export function getRandomWordsByDifficulty(count: number, difficulty: 'easy' | '
 }
 
 export function getCategories(): string[] {
-  return Array.from(new Set(germanVocabulary.map(word => word.category)));
+  return Array.from(new Set(germanVocabulary.map(word => word.category)))
+    .filter(category => category.startsWith('Level'))
+    .sort();
 }
 
 // Assign difficulty levels based on word length and complexity
