@@ -4,6 +4,8 @@ import { StorageManager } from '../utils/storage';
 import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
 import DailyChallenge from './DailyChallenge';
+import ReviewMode from './ReviewMode';
+import FlashcardMode from './FlashcardMode';
 
 interface DashboardProps {
   userData: UserData;
@@ -11,11 +13,15 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(0);
+  const [showReviewMode, setShowReviewMode] = useState(false);
+  const [showFlashcardMode, setShowFlashcardMode] = useState(false);
 
   useEffect(() => {
     const count = userData.achievements.filter(a => a.unlocked).length;
     setUnlockedAchievements(count);
   }, [userData.achievements]);
+
+  const weakWordsStats = StorageManager.getWeakWordsStats();
 
   const getLevelName = (level: number): string => {
     if (level < 2) return 'Beginner';
@@ -32,6 +38,14 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const currentLevelXP = userData.stats.level * 100;
   const nextLevelXP = getNextLevelXP(userData.stats.level);
   const xpProgress = ((userData.stats.totalXP - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
+
+  if (showReviewMode) {
+    return <ReviewMode userData={userData} onClose={() => setShowReviewMode(false)} />;
+  }
+
+  if (showFlashcardMode) {
+    return <FlashcardMode onClose={() => setShowFlashcardMode(false)} />;
+  }
 
   return (
     <div className="space-y-8">
@@ -70,31 +84,129 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
       {/* Secondary Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className={`game-card p-6 ${userData.stats.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">SCORE</p>
           <p className="text-3xl font-bold text-primary mt-2">{userData.stats.totalScore.toLocaleString()}</p>
         </div>
 
-        <div className={`game-card p-6 ${userData.stats.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">GAMES PLAYED</p>
           <p className="text-3xl font-bold text-primary mt-2">{userData.stats.gamesCompleted}</p>
         </div>
 
-        <div className={`game-card p-6 ${userData.stats.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">CURRENT STREAK</p>
           <p className="text-3xl font-bold text-primary mt-2">
             {userData.stats.currentStreak} 🔥
           </p>
         </div>
 
-        <div className={`game-card p-6 ${userData.stats.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">BEST STREAK</p>
           <p className="text-3xl font-bold text-primary mt-2">{userData.stats.bestStreak} 🏆</p>
         </div>
       </div>
 
+      {/* Learning Modes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={`game-card p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700`}>
+          <h3 className="text-2xl font-bold mb-2">📚 Review Mode</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Practice words due for review using spaced repetition
+          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-sm">
+              <span className="font-bold text-purple-600">{weakWordsStats.due}</span> due for review
+            </div>
+            <div className="text-sm">
+              <span className="font-bold text-green-600">{weakWordsStats.mastered}</span> mastered
+            </div>
+          </div>
+          <button
+            onClick={() => setShowReviewMode(true)}
+            className="button-primary w-full"
+          >
+            Start Review
+          </button>
+        </div>
+
+        <div className={`game-card p-6 bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border-2 border-blue-300 dark:border-blue-700`}>
+          <h3 className="text-2xl font-bold mb-2">🃏 Flashcard Mode</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Review vocabulary with interactive flashcards
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mb-4">
+            Choose a category and practice at your own pace
+          </p>
+          <button
+            onClick={() => setShowFlashcardMode(true)}
+            className="button-primary w-full"
+          >
+            Start Flashcards
+          </button>
+        </div>
+      </div>
+
+      {/* Progress Chart */}
+      <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <h3 className="text-2xl font-bold mb-4">📈 Learning Progress</h3>
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-semibold">Words Learned</span>
+              <span className="text-sm">{userData.stats.wordsLearned} / 540</span>
+            </div>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill bg-gradient-to-r from-blue-500 to-purple-500" 
+                style={{ width: `${(userData.stats.wordsLearned / 540) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-semibold">Level Progress</span>
+              <span className="text-sm">Level {userData.stats.level}</span>
+            </div>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill bg-gradient-to-r from-green-500 to-teal-500" 
+                style={{ width: `${xpProgress}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-semibold">Accuracy</span>
+              <span className="text-sm">{userData.stats.accuracy}%</span>
+            </div>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill bg-gradient-to-r from-orange-500 to-red-500" 
+                style={{ width: `${userData.stats.accuracy}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-semibold">Weak Words Mastered</span>
+              <span className="text-sm">{weakWordsStats.mastered} / {weakWordsStats.total}</span>
+            </div>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill bg-gradient-to-r from-purple-500 to-pink-500" 
+                style={{ width: `${weakWordsStats.total > 0 ? (weakWordsStats.mastered / weakWordsStats.total) * 100 : 0}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Achievements Quick View */}
-      <div className={`game-card p-6 ${userData.stats.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+      <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
         <h3 className="text-2xl font-bold mb-4">🏆 Achievements</h3>
         <p className="text-lg font-semibold text-primary mb-4">
           {unlockedAchievements} / {userData.achievements.length} Unlocked
