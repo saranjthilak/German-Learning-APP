@@ -7,6 +7,7 @@ export interface GermanWord {
   article?: string; // der, die, das
   plural?: string;
   partOfSpeech?: string; // noun, verb, adjective, etc
+  difficulty?: 'easy' | 'medium' | 'hard';
 }
 
 export const germanVocabulary: GermanWord[] = [
@@ -484,6 +485,42 @@ export function getRandomWords(count: number): GermanWord[] {
   return shuffled.slice(0, count);
 }
 
+export function getRandomWordsByCategory(count: number, category: string): GermanWord[] {
+  const categoryWords = getWordsByCategory(category);
+  const shuffled = [...categoryWords].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+export function getWordsByDifficulty(difficulty: 'easy' | 'medium' | 'hard'): GermanWord[] {
+  return germanVocabulary.filter(word => word.difficulty === difficulty);
+}
+
+export function getRandomWordsByDifficulty(count: number, difficulty: 'easy' | 'medium' | 'hard'): GermanWord[] {
+  const difficultyWords = getWordsByDifficulty(difficulty);
+  const shuffled = [...difficultyWords].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
 export function getCategories(): string[] {
   return Array.from(new Set(germanVocabulary.map(word => word.category)));
 }
+
+// Assign difficulty levels based on word length and complexity
+export function assignDifficultyLevels(): void {
+  germanVocabulary.forEach(word => {
+    const length = word.german.length;
+    const hasSpecialChars = /[äöüß]/.test(word.german);
+    const isCompound = word.german.includes(' ');
+    
+    if (length <= 5 && !hasSpecialChars && !isCompound) {
+      word.difficulty = 'easy';
+    } else if (length <= 10 && !isCompound) {
+      word.difficulty = 'medium';
+    } else {
+      word.difficulty = 'hard';
+    }
+  });
+}
+
+// Initialize difficulty levels
+assignDifficultyLevels();

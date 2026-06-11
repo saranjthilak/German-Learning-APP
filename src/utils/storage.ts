@@ -93,23 +93,36 @@ export const StorageManager = {
     return userData;
   },
 
-  // Add weak word for review
-  addWeakWord: (wordId: string): void => {
+  // Add weak word for review (spaced repetition)
+  addWeakWord: (wordId: string, correct: boolean = false): void => {
     const userData = StorageManager.getUserData();
     const existing = userData.weakWords.find(w => w.wordId === wordId);
 
     if (existing) {
-      existing.incorrectCount += 1;
       existing.lastAttempt = new Date().toISOString();
-      existing.nextReviewDate = new Date(
-        Date.now() + existing.incorrectCount * 24 * 60 * 60 * 1000
-      ).toISOString();
+      
+      if (correct) {
+        // SM-2 Algorithm for correct answers
+        existing.correctCount += 1;
+        existing.easeFactor = Math.max(1.3, existing.easeFactor + (0.1 - (5 - 3) * (0.08 + (5 - 3) * 0.02)));
+        existing.interval = existing.interval === 0 ? 1 : Math.round(existing.interval * existing.easeFactor);
+        existing.nextReviewDate = new Date(Date.now() + existing.interval * 24 * 60 * 60 * 1000).toISOString();
+      } else {
+        // Reset interval on incorrect answer
+        existing.incorrectCount += 1;
+        existing.interval = 0;
+        existing.easeFactor = Math.max(1.3, existing.easeFactor - 0.2);
+        existing.nextReviewDate = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // Review in 10 minutes
+      }
     } else {
       userData.weakWords.push({
         wordId,
-        incorrectCount: 1,
+        incorrectCount: correct ? 0 : 1,
+        correctCount: correct ? 1 : 0,
         lastAttempt: new Date().toISOString(),
-        nextReviewDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        nextReviewDate: new Date(Date.now() + (correct ? 24 * 60 * 60 * 1000 : 10 * 60 * 1000)).toISOString(),
+        easeFactor: 2.5,
+        interval: 0,
       });
     }
 
@@ -278,5 +291,24 @@ export const StorageManager = {
   // Clear all data (reset game)
   clearAllData: (): void => {
     localStorage.removeItem(STORAGE_KEY);
+  },
+
+  // Get words due for review (spaced repetition)
+  getWordsDueForReview: (): string[] => {
+    const userData = StorageManager.getUserData();
+    const now = new Date().toISOString();
+    return userData.weakWords
+      .filter(w => new Date(w.nextReviewDate) <= new Date(now))
+      .map(w => w.wordId);
+  },
+
+  // Get weak words statistics
+  getWeakWordsStats: () => {
+    const userData = StorageManager.getUserData();
+    const total = userData.weakWords.length;
+    const due = userData.weakWords.filter(w => new Date(w.nextReviewDate) <= new Date()).length;
+    const mastered = userData.weakWords.filter(w => w.correctCount >= 3 && w.interval >= 7).length;
+    
+    return { total, due, mastered };
   },
 };

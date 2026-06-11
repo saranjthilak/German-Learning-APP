@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { germanVocabulary, getRandomWords, GermanWord } from '../../data/vocabulary';
+import { getRandomWords, getRandomWordsByCategory, getCategories, GermanWord, germanVocabulary } from '../../data/vocabulary';
 
 interface QuizGameProps {
   onComplete: (xpEarned: number, accuracy: number, correctAnswers: number, totalAnswers: number) => void;
@@ -13,6 +13,7 @@ interface Question {
 
 const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [gameStarted, setGameStarted] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -28,7 +29,9 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   }, [gameStarted]);
 
   const startGame = () => {
-    const selectedWords = getRandomWords(wordsCount);
+    const selectedWords = selectedCategory === 'All' 
+      ? getRandomWords(wordsCount)
+      : getRandomWordsByCategory(wordsCount, selectedCategory);
     const gameQuestions: Question[] = selectedWords.map((word) => {
       const correctOption = word.english;
       const incorrectOptions = germanVocabulary
@@ -78,6 +81,8 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   };
 
   if (!gameStarted) {
+    const categories = ['All', ...getCategories()];
+    
     return (
       <div className="text-center space-y-6">
         <h1 className="text-4xl font-bold">❓ Quiz Game</h1>
@@ -86,6 +91,25 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
         </p>
 
         <div className="space-y-4 max-w-md mx-auto">
+          <div>
+            <label className="block text-lg font-bold mb-4">Select Category</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`py-2 px-3 text-sm font-bold rounded-lg transition-all ${
+                    selectedCategory === category
+                      ? 'bg-primary text-white scale-105'
+                      : 'bg-gray-200 dark:bg-gray-700'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label className="block text-lg font-bold mb-4">Select difficulty (number of questions)</label>
             <div className="grid grid-cols-3 gap-4">
