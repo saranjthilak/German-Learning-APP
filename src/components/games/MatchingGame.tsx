@@ -49,6 +49,13 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
     }));
   };
 
+  useEffect(() => {
+    if (selected.german && selected.english && !feedback) {
+      handleMatch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected.german, selected.english]);
+
   const handleMatch = () => {
     if (!selected.german || !selected.english) return;
 
@@ -236,14 +243,7 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
         </div>
       </div>
 
-      {/* Match Button */}
-      <button
-        onClick={handleMatch}
-        disabled={!selected.german || !selected.english}
-        className="button-primary w-full text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Match Pair
-      </button>
+
     </div>
   );
 };
