@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageManager } from '../../utils/storage';
 import { getRandomWords, getRandomWordsByCategory, getCategories, GermanWord } from '../../data/vocabulary';
 
 interface MemoryGameProps {

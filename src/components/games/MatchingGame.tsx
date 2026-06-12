@@ -62,6 +62,14 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
     const germanWord = words.find(w => w.german === selected.german);
     setTotalAttempts(prev => prev + 1);
 
+    if (germanWord?.english !== selected.english) {
+      StorageManager.addWeakWord(germanWord!.id, false);
+    }
+
+    if (germanWord?.english !== selected.english) {
+      StorageManager.addWeakWord(germanWord!.id, false);
+    }
+
     if (germanWord?.english === selected.english) {
       setMatched(prev => new Set([...prev, selected.german!]));
       setScore(prev => prev + 10);

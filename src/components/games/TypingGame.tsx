@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getRandomWords, getRandomWordsByCategory, getCategories, GermanWord } from '../../data/vocabulary';
 import { SpeechManager } from '../../utils/speech';
+import { StorageManager } from '../../utils/storage';
 
 interface TypingGameProps {
   onComplete: (xpEarned: number, accuracy: number, correctAnswers: number, totalAnswers: number) => void;

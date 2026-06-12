@@ -64,6 +64,7 @@ const App: React.FC = () => {
   const handleToggleDarkMode = () => {
     const newDarkMode = StorageManager.toggleDarkMode();
     setDarkMode(newDarkMode);
+    setUserData(prev => ({ ...prev, darkMode: newDarkMode }));
   };
 
   const renderContent = () => {

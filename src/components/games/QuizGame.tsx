@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageManager } from '../../utils/storage';
 import { getRandomWords, getRandomWordsByCategory, getCategories, GermanWord, germanVocabulary } from '../../data/vocabulary';
 
 interface QuizGameProps {

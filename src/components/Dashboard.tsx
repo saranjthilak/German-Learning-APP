@@ -108,24 +108,24 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
       {/* Secondary Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={"game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">SCORE</p>
           <p className="text-3xl font-bold text-primary mt-2">{userData.stats.totalScore.toLocaleString()}</p>
         </div>
 
-        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={"game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">GAMES PLAYED</p>
           <p className="text-3xl font-bold text-primary mt-2">{userData.stats.gamesCompleted}</p>
         </div>
 
-        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={"game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">CURRENT STREAK</p>
           <p className="text-3xl font-bold text-primary mt-2">
             {userData.stats.currentStreak} 🔥
           </p>
         </div>
 
-        <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+        <div className={"game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}>
           <p className="text-gray-600 dark:text-gray-400 text-sm">BEST STREAK</p>
           <p className="text-3xl font-bold text-primary mt-2">{userData.stats.bestStreak} 🏆</p>
         </div>
@@ -133,7 +133,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
       {/* Learning Modes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className={`game-card p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700`}>
+        <div className={`game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700`}>
           <h3 className="text-2xl font-bold mb-2">📚 Review Mode</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Practice words due for review using spaced repetition
@@ -154,7 +154,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </button>
         </div>
 
-        <div className={`game-card p-6 bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border-2 border-blue-300 dark:border-blue-700`}>
+        <div className={`game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border-2 border-blue-300 dark:border-blue-700`}>
           <h3 className="text-2xl font-bold mb-2">🃏 Flashcard Mode</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Review vocabulary with interactive flashcards
@@ -172,7 +172,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
       </div>
 
       {/* Progress Chart */}
-      <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+      <div className={"game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}>
         <h3 className="text-2xl font-bold mb-4">📈 Learning Progress</h3>
         <div className="space-y-4">
           <div>
@@ -230,7 +230,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
       </div>
 
       {/* Achievements Quick View */}
-      <div className={`game-card p-6 ${userData.darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+      <div className={"game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"}>
         <h3 className="text-2xl font-bold mb-4">🏆 Achievements</h3>
         <p className="text-lg font-semibold text-primary mb-4">
           {unlockedAchievements} / {userData.achievements.length} Unlocked

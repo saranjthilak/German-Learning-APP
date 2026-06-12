@@ -23,11 +23,27 @@ const DEFAULT_USER_DATA: UserData = {
 };
 
 export const StorageManager = {
+  // Mark a word as learned
+  markWordLearned: (wordId: string): void => {
+    const userData = StorageManager.getUserData();
+    if (!userData.learnedWords) userData.learnedWords = [];
+    if (!userData.learnedWords.includes(wordId)) {
+      userData.learnedWords.push(wordId);
+      userData.stats.wordsLearned = userData.learnedWords.length;
+      StorageManager.saveUserData(userData);
+    }
+  },
+
   // Initialize or get user data
   getUserData: (): UserData => {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : DEFAULT_USER_DATA;
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (!parsed.learnedWords) parsed.learnedWords = [];
+        return parsed;
+      }
+      return DEFAULT_USER_DATA;
     } catch (error) {
       console.error('Error reading user data:', error);
       return DEFAULT_USER_DATA;
