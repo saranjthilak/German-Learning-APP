@@ -32,6 +32,8 @@ const ReviewMode: React.FC<ReviewModeProps> = ({ userData, onClose }) => {
     // Score: 0-5 (0=again, 1=hard, 2=good, 3=easy)
     const isCorrect = score >= 2;
     StorageManager.addWeakWord(currentWord.id, isCorrect);
+    if (isCorrect) StorageManager.markWordLearned(currentWord.id);
+    if (isCorrect) StorageManager.markWordLearned(currentWord.id);
 
     setStats(prev => ({
       reviewed: prev.reviewed + 1,

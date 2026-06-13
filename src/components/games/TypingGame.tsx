@@ -42,6 +42,8 @@ const TypingGame: React.FC<TypingGameProps> = ({ onComplete }) => {
 
     if (isCorrect) {
       setCorrectAnswers(prev => prev + 1);
+      StorageManager.markWordLearned(currentWord.id);
+      StorageManager.addWeakWord(currentWord.id, true);
       setStreak(prev => {
         const newStreak = prev + 1;
         if (newStreak > bestStreak) setBestStreak(newStreak);
@@ -49,6 +51,7 @@ const TypingGame: React.FC<TypingGameProps> = ({ onComplete }) => {
       });
       setFeedback({ type: 'correct', message: '✓ Correct!' });
     } else {
+      StorageManager.addWeakWord(currentWord.id, false);
       setStreak(0);
       setFeedback({ type: 'incorrect', message: `✗ Wrong! It's "${currentWord.german}"` });
     }

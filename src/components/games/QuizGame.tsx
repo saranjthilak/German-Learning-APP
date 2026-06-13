@@ -60,8 +60,15 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
     setSelectedAnswer(index);
     setShowResult(true);
 
-    if (index === questions[currentQuestion].correct) {
+    const isCorrect = index === questions[currentQuestion].correct;
+    const wordId = questions[currentQuestion].word.id;
+
+    if (isCorrect) {
       setCorrectAnswers(prev => prev + 1);
+      StorageManager.markWordLearned(wordId);
+      StorageManager.addWeakWord(wordId, true);
+    } else {
+      StorageManager.addWeakWord(wordId, false);
     }
   };
 

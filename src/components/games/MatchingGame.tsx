@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageManager } from '../../utils/storage';
 import { GermanWord, getRandomWords, getRandomWordsByCategory, getCategories } from '../../data/vocabulary';
 
 interface MatchingGameProps {
@@ -86,6 +87,7 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
         }
       }, 1000);
     } else {
+      StorageManager.addWeakWord(germanWord!.id, false);
       setScore(prev => Math.max(0, prev - 2));
       setFeedback({ type: 'incorrect', message: '✗ Try Again!' });
 

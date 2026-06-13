@@ -48,10 +48,14 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
 
         if (sim >= 80) {
           setCorrectAnswers(prev => prev + 1);
+          StorageManager.markWordLearned(currentWord.id);
+          StorageManager.addWeakWord(currentWord.id, true);
           setFeedback({ type: 'correct', message: '✓ Excellent pronunciation!' });
         } else if (sim >= 60) {
+          StorageManager.addWeakWord(currentWord.id, false);
           setFeedback({ type: 'close', message: '~ Close! Try again' });
         } else {
+          StorageManager.addWeakWord(currentWord.id, false);
           setFeedback({ type: 'incorrect', message: '✗ Not quite right' });
         }
 

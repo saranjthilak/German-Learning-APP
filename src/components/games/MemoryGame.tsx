@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StorageManager } from '../../utils/storage';
-import { getRandomWords, getRandomWordsByCategory, getCategories, GermanWord } from '../../data/vocabulary';
+import { getRandomWords, getRandomWordsByCategory, getCategories } from '../../data/vocabulary';
 
 interface MemoryGameProps {
   onComplete: (xpEarned: number, accuracy: number, correctAnswers: number, totalAnswers: number) => void;
@@ -86,14 +86,19 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onComplete }) => {
     const card2 = cards[indices[1]];
 
     setTimeout(() => {
-      if (card1.wordId === card2.wordId) {
+      const isMatch = card1.wordId === card2.wordId;
+      if (isMatch) {
         // Match found
         setMatched(prev => new Set([...prev, ...indices]));
         setCorrectMatches(prev => prev + 1);
+        StorageManager.markWordLearned(card1.wordId);
+        StorageManager.addWeakWord(card1.wordId, true);
 
         if (matched.size + 2 === cards.length) {
           setTimeout(() => completeGame(), 500);
         }
+      } else {
+        StorageManager.addWeakWord(card1.wordId, false);
       }
 
       setFlipped(new Set());
