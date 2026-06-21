@@ -1,4 +1,4 @@
-import { UserData, AchievementData, GameSession } from '../types';
+import { UserData } from '../types';
 import { getRandomWords } from '../data/vocabulary';
 
 const STORAGE_KEY = 'german-vocab-game-data';
@@ -18,6 +18,7 @@ const DEFAULT_USER_DATA: UserData = {
   gameSessions: [],
   dailyChallenges: [],
   weakWords: [],
+  learnedWords: [],
   playerName: 'Player',
   darkMode: false,
 };

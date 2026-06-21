@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { GermanWord, getCategories, getRandomWords, getRandomWordsByCategory } from '../data/vocabulary';
 import { SpeechManager } from '../utils/speech';
-import { StorageManager } from '../utils/storage';
 
 interface FlashcardModeProps {
   onClose: () => void;

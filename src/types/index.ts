@@ -23,7 +23,8 @@ export interface AchievementData {
 
 export interface LeaderboardEntry {
   id: string;
-  learnedWords: string[];\n  playerName: string;
+  learnedWords: string[];
+  playerName: string;
   level: number;
   totalXP: number;
   wordsLearned: number;
@@ -67,6 +68,7 @@ export interface UserData {
   gameSessions: GameSession[];
   dailyChallenges: DailyChallenge[];
   weakWords: WeakWord[];
-  learnedWords: string[];\n  playerName: string;
+  learnedWords: string[];
+  playerName: string;
   darkMode: boolean;
 }

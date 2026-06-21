@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { UserData } from '../types';
-import { StorageManager } from '../utils/storage';
 
 interface LeaderboardProps {
   userData: UserData;

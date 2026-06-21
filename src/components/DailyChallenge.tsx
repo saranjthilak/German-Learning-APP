@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { UserData } from '../types';
 import { StorageManager } from '../utils/storage';
 import { germanVocabulary } from '../data/vocabulary';
 
-interface DailyChallengeProps {
-  userData: UserData;
-}
-
-const DailyChallenge: React.FC<DailyChallengeProps> = ({ userData }) => {
+const DailyChallenge: React.FC = () => {
   const [challenge, setChallenge] = useState<any>(null);
   const [completionDate, setCompletionDate] = useState<string | null>(null);
 
@@ -54,7 +49,7 @@ const DailyChallenge: React.FC<DailyChallengeProps> = ({ userData }) => {
 
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg mb-4 max-h-40 overflow-y-auto">
         <div className="grid grid-cols-2 gap-2">
-          {challenge.words.slice(0, 6).map((wordId: string, index: number) => {
+          {challenge.words.slice(0, 6).map((wordId: string) => {
             const word = germanVocabulary.find(w => w.id === wordId);
             return (
               <div key={wordId} className="text-sm">

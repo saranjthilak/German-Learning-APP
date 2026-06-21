@@ -5,7 +5,6 @@ import { germanVocabulary } from '../data/vocabulary';
 import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
 import DailyChallenge from './DailyChallenge';
-import ReviewMode from './ReviewMode';
 import FlashcardMode from './FlashcardMode';
 
 interface DashboardProps {
@@ -14,7 +13,6 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(0);
-  const [showReviewMode, setShowReviewMode] = useState(false);
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
 
   const TOTAL_WORDS = germanVocabulary.length;
@@ -22,14 +20,9 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash === 'review') {
-        setShowReviewMode(true);
-        setShowFlashcardMode(false);
-      } else if (hash === 'flashcard') {
+      if (hash === 'flashcard') {
         setShowFlashcardMode(true);
-        setShowReviewMode(false);
       } else {
-        setShowReviewMode(false);
         setShowFlashcardMode(false);
       }
     };
@@ -62,10 +55,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const currentLevelXP = userData.stats.level * 100;
   const nextLevelXP = getNextLevelXP(userData.stats.level);
   const xpProgress = ((userData.stats.totalXP - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
-
-  if (showReviewMode) {
-    return <ReviewMode userData={userData} onClose={() => window.location.hash = ''} />;
-  }
 
   if (showFlashcardMode) {
     return <FlashcardMode onClose={() => window.location.hash = ''} />;
@@ -132,29 +121,8 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
       </div>
 
       {/* Learning Modes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className={`game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-700`}>
-          <h3 className="text-2xl font-bold mb-2">📚 Review Mode</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Practice words due for review using spaced repetition
-          </p>
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-sm">
-              <span className="font-bold text-purple-600">{weakWordsStats.due}</span> due for review
-            </div>
-            <div className="text-sm">
-              <span className="font-bold text-green-600">{weakWordsStats.mastered}</span> mastered
-            </div>
-          </div>
-          <button
-            onClick={() => window.location.hash = 'review'}
-            className="button-primary w-full"
-          >
-            Start Review
-          </button>
-        </div>
-
-        <div className={`game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border-2 border-blue-300 dark:border-blue-700`}>
+      <div className="grid grid-cols-1 gap-4">
+        <div className="game-card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border-2 border-blue-300 dark:border-blue-700">
           <h3 className="text-2xl font-bold mb-2">🃏 Flashcard Mode</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Review vocabulary with interactive flashcards
@@ -250,7 +218,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
       {/* Main Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <DailyChallenge userData={userData} />
+        <DailyChallenge />
         <Leaderboard userData={userData} />
       </div>
 
