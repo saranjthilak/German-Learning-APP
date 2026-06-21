@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { germanVocabulary, GermanWord, getRandomWords } from '../../data/vocabulary';
-import { StorageManager } from '../../utils/storage';
+import { GermanWord, getRandomWords, getRandomWordsByCategory, getCategories } from '../../data/vocabulary';
 
 interface MatchingGameProps {
   onComplete: (xpEarned: number, accuracy: number, correctAnswers: number, totalAnswers: number) => void;
@@ -8,6 +7,7 @@ interface MatchingGameProps {
 
 const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [gameStarted, setGameStarted] = useState(false);
   const [words, setWords] = useState<GermanWord[]>([]);
   const [englishWords, setEnglishWords] = useState<string[]>([]);
@@ -27,7 +27,9 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
   }, [gameStarted]);
 
   const startGame = () => {
-    const selectedWords = getRandomWords(wordsCount);
+    const selectedWords = selectedCategory === 'All' 
+      ? getRandomWords(wordsCount)
+      : getRandomWordsByCategory(wordsCount, selectedCategory);
     setWords(selectedWords);
     setEnglishWords(selectedWords.map(w => w.english).sort(() => Math.random() - 0.5));
     setGameStarted(true);
@@ -86,6 +88,8 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
   };
 
   if (!gameStarted) {
+    const categories = ['All', ...getCategories()];
+    
     return (
       <div className="text-center space-y-6">
         <h1 className="text-4xl font-bold">🎯 Matching Game</h1>
@@ -94,6 +98,25 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
         </p>
 
         <div className="space-y-4 max-w-md mx-auto">
+          <div>
+            <label className="block text-lg font-bold mb-4">Select Category</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`py-2 px-3 text-sm font-bold rounded-lg transition-all ${
+                    selectedCategory === category
+                      ? 'bg-primary text-white scale-105'
+                      : 'bg-gray-200 dark:bg-gray-700'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label className="block text-lg font-bold mb-4">Select difficulty (words count)</label>
             <div className="grid grid-cols-3 gap-4">

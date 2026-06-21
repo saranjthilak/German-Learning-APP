@@ -4,6 +4,8 @@ import { StorageManager } from '../utils/storage';
 import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
 import DailyChallenge from './DailyChallenge';
+import ReviewMode from './ReviewMode';
+import FlashcardMode from './FlashcardMode';
 
 interface DashboardProps {
   userData: UserData;
@@ -11,11 +13,15 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(0);
+  const [showReviewMode, setShowReviewMode] = useState(false);
+  const [showFlashcardMode, setShowFlashcardMode] = useState(false);
 
   useEffect(() => {
     const count = userData.achievements.filter(a => a.unlocked).length;
     setUnlockedAchievements(count);
   }, [userData.achievements]);
+
+  const weakWordsStats = StorageManager.getWeakWordsStats();
 
   const getLevelName = (level: number): string => {
     if (level < 2) return 'Beginner';
