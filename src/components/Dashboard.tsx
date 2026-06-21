@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { User } from 'firebase/auth';
 import { UserData } from '../types';
 import { StorageManager } from '../utils/storage';
 import { germanVocabulary } from '../data/vocabulary';
@@ -9,9 +10,11 @@ import FlashcardMode from './FlashcardMode';
 
 interface DashboardProps {
   userData: UserData;
+  user?: User | null;
+  syncing?: boolean;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
+const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing }) => {
   const [unlockedAchievements, setUnlockedAchievements] = useState(0);
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
 
@@ -62,6 +65,55 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
   return (
     <div className="space-y-8">
+
+      {/* ── User welcome banner ───────────────────────────────────────── */}
+      {user ? (
+        <div
+          className="rounded-2xl px-6 py-4 flex items-center justify-between"
+          style={{
+            background: 'linear-gradient(135deg, rgba(99,179,237,0.15) 0%, rgba(124,58,237,0.15) 100%)',
+            border: '1px solid rgba(99,179,237,0.25)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            {/* Avatar */}
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shadow flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #63b3ed 0%, #7c3aed 100%)' }}
+            >
+              {user.photoURL
+                ? <img src={user.photoURL} alt="avatar" className="w-full h-full rounded-full object-cover" />
+                : (user.displayName ?? user.email ?? '?').slice(0, 2).toUpperCase()
+              }
+            </div>
+            <div>
+              <p className="font-semibold text-sm">
+                Welcome back, {user.displayName?.split(' ')[0] ?? 'Learner'}! 👋
+              </p>
+              <p className="text-xs opacity-50">{user.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {syncing ? (
+              <span className="text-xs text-blue-400 animate-pulse font-medium">⟳ Syncing…</span>
+            ) : (
+              <span className="text-xs text-green-400 font-medium">☁ Progress synced</span>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div
+          className="rounded-2xl px-6 py-3 flex items-center justify-between"
+          style={{
+            background: 'rgba(251,191,36,0.08)',
+            border: '1px solid rgba(251,191,36,0.2)',
+          }}
+        >
+          <p className="text-sm opacity-70">🔒 Playing as guest — progress saved locally only.</p>
+          <span className="text-xs opacity-50">Sign in to sync across devices</span>
+        </div>
+      )}
+
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Level Card */}
