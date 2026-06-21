@@ -53,8 +53,11 @@ export interface DailyChallenge {
 export interface WeakWord {
   wordId: string;
   incorrectCount: number;
+  correctCount: number;
   lastAttempt: string;
   nextReviewDate: string;
+  easeFactor: number;
+  interval: number;
 }
 
 export interface UserData {
