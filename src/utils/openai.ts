@@ -201,7 +201,7 @@ export const sendMessage = async (
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: geminiContents,
       generationConfig: {
-        maxOutputTokens: 300,
+        maxOutputTokens: 1000,
         temperature: 0.8,
       },
     }),
@@ -220,7 +220,25 @@ export const sendMessage = async (
   }
 
   const data = await response.json();
-  const text = (data.choices?.[0]?.message?.content ?? '').trim();
+  console.log('Gemini API Response:', data);
+
+  if (data.promptFeedback?.blockReason) {
+    throw new Error(`BLOCKED_BY_SAFETY: ${data.promptFeedback.blockReason}`);
+  }
+
+  const candidate = data.candidates?.[0];
+  if (!candidate) {
+    throw new Error('NO_CANDIDATES_RETURNED');
+  }
+
+  const text = (candidate.content?.parts?.[0]?.text ?? '').trim();
+
+  if (!text) {
+    if (candidate.finishReason && candidate.finishReason !== 'STOP') {
+      throw new Error(`FINISHED_WITH_REASON_${candidate.finishReason}`);
+    }
+    throw new Error('EMPTY_TEXT_IN_RESPONSE');
+  }
 
   // Detect if the response contains significant English (help mode)
   const englishPhrases = ['it means', 'in english', 'you can say', 'the word is', 'means', 'try saying'];

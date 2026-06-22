@@ -172,10 +172,20 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
         setErrorMsg('Gemini rate limit reached. Please wait a moment and try again.');
       } else if (msg === 'MODEL_NOT_FOUND') {
         setErrorMsg('This Gemini model is not available. Go to Settings ⚙️ and switch to “gemini-2.5-flash”.');
+      } else if (msg.startsWith('BLOCKED_BY_SAFETY')) {
+        setErrorMsg(`Conversation blocked by Gemini safety filters: ${msg.split(': ')[1] || 'Unknown reason'}`);
+      } else if (msg === 'NO_CANDIDATES_RETURNED') {
+        setErrorMsg('Gemini returned an empty response with no candidates. Please verify your API key or model settings.');
+      } else if (msg.startsWith('FINISHED_WITH_REASON_')) {
+        setErrorMsg(`Gemini generation stopped prematurely: ${msg.replace('FINISHED_WITH_REASON_', '')}`);
+      } else if (msg === 'EMPTY_TEXT_IN_RESPONSE') {
+        setErrorMsg('Gemini returned an empty response text.');
       } else {
         setErrorMsg(`AI error: ${msg}`);
       }
       setAiStatus('error');
+      setIsMyTurn(true);
+      isMyTurnRef.current = true;
     }
   }, [level, topic, userData.playerName, speak, startUserTurn]);
 

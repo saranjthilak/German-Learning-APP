@@ -43,7 +43,10 @@ const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
 
   const speak = useCallback(
     (text: string, lang: 'de-DE' | 'en-US' = 'de-DE', onEnd?: () => void) => {
-      if (!isSupported || !text.trim()) return;
+      if (!isSupported || !text.trim()) {
+        onEnd?.();
+        return;
+      }
 
       // Cancel any ongoing speech
       window.speechSynthesis.cancel();
