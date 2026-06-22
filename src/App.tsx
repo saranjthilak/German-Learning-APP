@@ -12,9 +12,10 @@ import PronunciationGame from './components/games/PronunciationGame';
 import Settings from './components/Settings';
 import ThemeToggle from './components/ThemeToggle';
 import AuthModal from './components/AuthModal';
+import VoiceTutor from './components/VoiceTutor';
 import './index.css';
 
-type GameType = 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | null;
+type GameType = 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor' | null;
 
 // ─── Inner app (needs AuthContext) ────────────────────────────────────────────
 
@@ -110,6 +111,7 @@ const AppInner: React.FC = () => {
     if (currentGame === 'quiz')     return <QuizGame     onComplete={handleGameComplete} />;
     if (currentGame === 'typing')   return <TypingGame   onComplete={handleGameComplete} />;
     if (currentGame === 'pronunciation') return <PronunciationGame onComplete={handleGameComplete} />;
+    if (currentGame === 'voice-tutor')   return <VoiceTutor onClose={() => window.location.hash = ''} />;
 
     return (
       <>

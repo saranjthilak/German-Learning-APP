@@ -1,4 +1,4 @@
-import { UserData } from '../types';
+import { UserData, TutorSession } from '../types';
 import { getRandomWords } from '../data/vocabulary';
 
 const STORAGE_KEY = 'german-vocab-game-data';
@@ -21,6 +21,7 @@ const DEFAULT_USER_DATA: UserData = {
   learnedWords: [],
   playerName: 'Player',
   darkMode: false,
+  tutorSessions: [],
 };
 
 export const StorageManager = {
@@ -327,5 +328,33 @@ export const StorageManager = {
     const mastered = userData.weakWords.filter(w => w.correctCount >= 3 && w.interval >= 7).length;
     
     return { total, due, mastered };
+  },
+
+  // Save a completed tutor session
+  saveTutorSession: (session: TutorSession): UserData => {
+    const userData = StorageManager.getUserData();
+    if (!userData.tutorSessions) userData.tutorSessions = [];
+    userData.tutorSessions.push(session);
+    // Award XP for tutor session
+    userData.stats.totalXP += session.xpEarned;
+    userData.stats.level = Math.floor(userData.stats.totalXP / 100) + 1;
+    StorageManager.saveUserData(userData);
+    return userData;
+  },
+
+  // Get aggregated tutor stats
+  getTutorStats: () => {
+    const userData = StorageManager.getUserData();
+    const sessions = userData.tutorSessions ?? [];
+    const totalSeconds = sessions.reduce((sum, s) => sum + s.durationSeconds, 0);
+    const totalMessages = sessions.reduce((sum, s) => sum + s.messages.filter(m => m.role === 'user').length, 0);
+    const totalStruggle = sessions.reduce((sum, s) => sum + s.struggleCount, 0);
+    return {
+      totalSessions: sessions.length,
+      totalMinutes: Math.round(totalSeconds / 60),
+      totalUserMessages: totalMessages,
+      totalStruggleCount: totalStruggle,
+      lastSession: sessions.length > 0 ? sessions[sessions.length - 1] : null,
+    };
   },
 };

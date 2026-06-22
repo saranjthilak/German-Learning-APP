@@ -71,4 +71,43 @@ export interface UserData {
   learnedWords: string[];
   playerName: string;
   darkMode: boolean;
+  tutorSessions: TutorSession[];
+}
+
+// ── Voice Tutor ───────────────────────────────────────────────────────────────
+
+export type ProficiencyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
+
+export type ConversationTopic =
+  | 'daily-conversation'
+  | 'restaurant'
+  | 'shopping'
+  | 'airport'
+  | 'hotel'
+  | 'job-interview'
+  | 'doctor-visit'
+  | 'office-meeting'
+  | 'travel'
+  | 'friends-and-family';
+
+export interface TutorMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  language: 'german' | 'mixed' | 'english';
+  timestamp: string;
+  hadStruggle?: boolean;
+}
+
+export interface TutorSession {
+  id: string;
+  topic: ConversationTopic;
+  level: ProficiencyLevel;
+  startedAt: string;
+  endedAt: string;
+  durationSeconds: number;
+  messages: TutorMessage[];
+  wordsUsed: string[];
+  struggleCount: number;
+  xpEarned: number;
 }

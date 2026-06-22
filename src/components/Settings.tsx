@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserData } from '../types';
 import { StorageManager } from '../utils/storage';
+import { getStoredApiKey, saveApiKey, getStoredModel, saveModel, OPENAI_KEY_STORAGE } from '../utils/openai';
 
 interface SettingsProps {
   onClose: () => void;
@@ -8,12 +9,27 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ onClose, userData }) => {
-  const [playerName, setPlayerName] = useState(userData.playerName);
+  const [playerName, setPlayerName]   = useState(userData.playerName);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [openaiKey, setOpenaiKey]     = useState(getStoredApiKey());
+  const [openaiModel, setOpenaiModel] = useState(getStoredModel());
+  const [keySaved, setKeySaved]       = useState(false);
 
   const handleSaveName = () => {
     StorageManager.setPlayerName(playerName);
     alert('Player name updated!');
+  };
+
+  const handleSaveApiKey = () => {
+    saveApiKey(openaiKey.trim());
+    saveModel(openaiModel);
+    setKeySaved(true);
+    setTimeout(() => setKeySaved(false), 2000);
+  };
+
+  const handleClearApiKey = () => {
+    localStorage.removeItem(OPENAI_KEY_STORAGE);
+    setOpenaiKey('');
   };
 
   const handleReset = () => {
@@ -73,6 +89,57 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData }) => {
               <p className="font-bold">{userData.stats.gamesCompleted}</p>
             </div>
           </div>
+        </div>
+
+        {/* AI Tutor Settings */}
+        <div className="space-y-3 p-4 rounded-lg" style={{ background: 'linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12))', border: '1px solid rgba(102,126,234,0.25)' }}>
+          <h3 className="font-bold text-lg">🎙️ AI Voice Tutor</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Requires a Google Gemini API key. Your key is stored only in this browser and never sent anywhere else.
+          </p>
+          <div>
+            <label className="block text-sm font-semibold mb-1">Gemini API Key</label>
+            <input
+              id="openai-key-input"
+              type="password"
+              value={openaiKey}
+              onChange={(e) => setOpenaiKey(e.target.value)}
+              placeholder="AIza..."
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white font-mono text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1">Model</label>
+            <select
+              id="openai-model-select"
+              value={openaiModel}
+              onChange={(e) => setOpenaiModel(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white"
+            >
+              <option value="gemini-2.5-flash">gemini-2.5-flash — Best value ✓ recommended</option>
+              <option value="gemini-2.5-pro">gemini-2.5-pro — Highest quality</option>
+              <option value="gemini-2.0-flash">gemini-2.0-flash — Fast &amp; cheap</option>
+              <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite — Cheapest</option>
+              <option value="gemini-1.5-flash">gemini-1.5-flash — Stable / legacy</option>
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button id="save-api-key-btn" onClick={handleSaveApiKey}
+              className="flex-1 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
+              style={{ background: keySaved ? '#10b981' : 'linear-gradient(135deg, #667eea, #764ba2)' }}>
+              {keySaved ? '✓ Saved!' : 'Save API Key'}
+            </button>
+            {openaiKey && (
+              <button id="clear-api-key-btn" onClick={handleClearApiKey}
+                className="px-4 py-2 rounded-lg text-sm font-semibold"
+                style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.25)' }}>
+                Clear
+              </button>
+            )}
+          </div>
+          <p className="text-xs" style={{ color: 'rgba(107,114,128,0.8)' }}>
+            Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="underline text-blue-500">aistudio.google.com</a>
+          </p>
         </div>
 
         {/* Export Data */}
