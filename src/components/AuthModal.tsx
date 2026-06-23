@@ -54,7 +54,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
       await signInWithGoogle();
       onClose();
     } catch (err: any) {
-      setError('Google sign-in failed. Please try again.');
+      const code: string = err?.code ?? '';
+      if (code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized in Firebase. Add it under Authentication → Settings → Authorized domains.');
+      } else if (code === 'auth/popup-blocked') {
+        setError('Popup was blocked by your browser. Please allow popups for this site and try again.');
+      } else if (code === 'auth/popup-closed-by-user') {
+        setError('Sign-in popup was closed. Please try again.');
+      } else if (code === 'auth/cancelled-popup-request') {
+        setError('Another sign-in popup is already open.');
+      } else {
+        setError(`Google sign-in failed: ${code || err?.message || 'Unknown error'}`);
+      }
     } finally {
       setLoading(false);
     }
