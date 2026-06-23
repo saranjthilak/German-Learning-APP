@@ -1,152 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* {
-  @apply box-border;
+/* ── CSS Custom Properties ─────────────────────────────────────────────────── */
+:root {
+  --color-bg:        #111827;
+  --color-surface:   #1f2937;
+  --color-surface2:  #374151;
+  --color-border:    rgba(255,255,255,0.08);
+  --color-xp:        #facc15;
+  --color-streak:    #f97316;
+  --color-green:     #22c55e;
+  --color-blue:      #3b82f6;
+  --color-purple:    #a855f7;
+  --color-pink:      #ec4899;
+  --radius-card:     20px;
+  --shadow-card:     0 4px 24px rgba(0,0,0,0.35);
+  --shadow-glow-green: 0 0 20px rgba(34,197,94,0.4);
+  --shadow-glow-orange: 0 0 20px rgba(249,115,22,0.4);
+  --shadow-glow-yellow: 0 0 20px rgba(250,204,21,0.4);
+  --shadow-glow-blue: 0 0 20px rgba(59,130,246,0.4);
 }
 
-html {
-  @apply scroll-smooth;
-}
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  @apply m-0 p-0 font-sans antialiased;
+  font-family: 'Nunito', 'Segoe UI', sans-serif;
+  background: var(--color-bg);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
-/* Custom styles */
-.game-card {
-  @apply rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300;
-}
-
-.button-primary {
-  @apply px-6 py-3 bg-primary hover:bg-primaryDark text-white font-bold rounded-lg transition-colors duration-200 active:scale-95 transform;
-}
-
-.button-secondary {
-  @apply px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-lg transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600;
-}
-
-.progress-bar {
-  @apply w-full h-3 bg-gray-300 dark:bg-gray-600 rounded-full overflow-hidden;
-}
-
-.progress-fill {
-  @apply h-full bg-primary transition-all duration-500 ease-out;
-}
-
-.word-card {
-  @apply p-6 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-primary dark:hover:border-primary transition-colors duration-200;
-}
-
-.stat-box {
-  @apply p-4 rounded-lg bg-gradient-to-br from-primary to-primaryDark text-white shadow-md;
-}
-
-.level-badge {
-  @apply inline-block px-4 py-2 bg-primary text-white rounded-full font-bold;
-}
-
-.achievement-icon {
-  @apply text-4xl mb-2;
-}
-
-.floating-animation {
-  animation: float 3s ease-in-out infinite;
-}
+/* ── Keyframes ─────────────────────────────────────────────────────────────── */
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
 }
 
-.slide-in {
-  animation: slideIn 0.5s ease-out;
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25%       { transform: rotate(-8deg); }
+  75%       { transform: rotate(8deg); }
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(249,115,22,0.6); }
+  70%  { box-shadow: 0 0 0 14px rgba(249,115,22,0); }
+  100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
 }
 
-.fade-in-scale {
-  animation: fadeInScale 0.3s ease-out;
+@keyframes pulse-green {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+  70%  { box-shadow: 0 0 0 14px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
 }
 
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes xp-pop {
+  0%   { transform: scale(0.5) translateY(0); opacity: 1; }
+  80%  { transform: scale(1.2) translateY(-30px); opacity: 1; }
+  100% { transform: scale(1) translateY(-50px); opacity: 0; }
 }
 
-.bounce-in-animation {
-  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+@keyframes shine {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    transform: scale(1);
-  }
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.confetti-fall {
-  animation: confetti-fall 3s ease-in forwards;
+@keyframes fade-in-scale {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounce-in {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  80%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
 }
 
 @keyframes confetti-fall {
-  to {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .game-grid {
-    @apply grid-cols-1 sm:grid-cols-2;
-  }
-
-  .button-primary,
-  .button-secondary {
-    @apply w-full;
-  }
+@keyframes progress-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
 }
 
-/* Dark mode specific */
-.dark {
-  @apply bg-gray-900 text-white;
+@keyframes mic-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  70%  { box-shadow: 0 0 0 20px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
 }
 
-/* Accessibility */
+@keyframes counter-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utility Animation Classes ─────────────────────────────────────────────── */
+
+.animate-float    { animation: float 3s ease-in-out infinite; }
+.animate-wiggle   { animation: wiggle 0.5s ease-in-out; }
+.animate-slide-up { animation: slide-up 0.5s ease-out both; }
+.animate-fade-in-scale { animation: fade-in-scale 0.4s ease-out both; }
+.animate-bounce-in { animation: bounce-in 0.6s cubic-bezier(0.68,-0.55,0.265,1.55) both; }
+.animate-counter  { animation: counter-up 0.5s ease-out; }
+
+/* ── Card Styles ───────────────────────────────────────────────────────────── */
+
+.game-card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.stat-card {
+  border-radius: var(--radius-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+
+.stat-card:hover::after {
+  left: 120%;
+}
+
+/* ── Button Styles ─────────────────────────────────────────────────────────── */
+
+.glow-btn {
+  border: none;
+  border-radius: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 16px 32px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 0.3px;
+}
+
+.glow-btn:hover  { transform: translateY(-2px); }
+.glow-btn:active { transform: scale(0.97); }
+
+.glow-btn-green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 4px 20px rgba(34,197,94,0.4);
+}
+.glow-btn-green:hover { box-shadow: 0 8px 30px rgba(34,197,94,0.55); }
+
+.glow-btn-purple {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  color: white;
+  box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+}
+.glow-btn-purple:hover { box-shadow: 0 8px 30px rgba(168,85,247,0.55); }
+
+/* ── Progress Bar ──────────────────────────────────────────────────────────── */
+
+.progress-track {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill-animated {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: progress-glow 2s ease-in-out infinite;
+  position: relative;
+}
+
+/* Legacy compat */
+.progress-bar  { @apply w-full h-3 bg-gray-700 rounded-full overflow-hidden; }
+.progress-fill { @apply h-full transition-all duration-700 ease-out; }
+
+/* ── Badge ─────────────────────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Confetti ──────────────────────────────────────────────────────────────── */
+
+.confetti-particle {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+/* ── Accessibility ─────────────────────────────────────────────────────────── */
+
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Button legacy compat ──────────────────────────────────────────────────── */
+
+.button-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  color: white;
+  font-weight: 800;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-family: 'Nunito', sans-serif;
+}
+.button-primary:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+.button-primary:active { transform: scale(0.97); }
+
+.button-secondary {
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-family: 'Nunito', sans-serif;
+}
+.button-secondary:hover { background: rgba(255,255,255,0.18); }
+
+/* ── stat-box legacy compat ────────────────────────────────────────────────── */
+.stat-box { padding: 16px; border-radius: 16px; }
+
+/* ── word-card ─────────────────────────────────────────────────────────────── */
+.word-card {
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid rgba(255,255,255,0.1);
+  background: var(--color-surface);
+  transition: border-color 0.2s ease;
+}
+.word-card:hover { border-color: var(--color-blue); }
+
+/* ── Game-specific animations ─────────────────────────────────────────────── */
+.slide-in { animation: slide-up 0.5s ease-out; }
+.fade-in-scale { animation: fade-in-scale 0.3s ease-out; }
+.bounce-in-animation { animation: bounce-in 0.6s cubic-bezier(0.68,-0.55,0.265,1.55); }
+.floating-animation { animation: float 3s ease-in-out infinite; }
+.level-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  color: white;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+/* ── Dark class compat ─────────────────────────────────────────────────────── */
+.dark { background: var(--color-bg); color: white; }
