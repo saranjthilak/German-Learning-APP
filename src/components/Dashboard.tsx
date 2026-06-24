@@ -408,6 +408,31 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         </div>
       </div>
 
+      {/* ── Flashcard Mode Card ───────────────────────────────────────────── */}
+      <div className="game-card" style={{
+        background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
+        border: '1px solid rgba(99,179,237,0.2)',
+        padding: 24,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 20,
+      }}>
+        <div style={{ fontSize: 52, flexShrink: 0 }}>🃏</div>
+        <div style={{ flex: 1 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 4 }}>Flashcard Mode</h3>
+          <p style={{ fontSize: 13, opacity: 0.55, marginBottom: 14 }}>
+            Review vocabulary with interactive flashcards at your own pace
+          </p>
+          <button
+            onClick={() => { window.location.hash = 'flashcard'; }}
+            className="glow-btn glow-btn-purple"
+            style={{ fontSize: 13, padding: '11px 22px' }}
+          >
+            Start Flashcards →
+          </button>
+        </div>
+      </div>
+
       {/* ── Achievement Badges ───────────────────────────────────────────── */}
       <div className="game-card" style={{
         background: '#1a1a2e',
@@ -493,30 +518,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         </div>
       </div>
 
-      {/* ── Flashcard Mode Card ───────────────────────────────────────────── */}
-      <div className="game-card" style={{
-        background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
-        border: '1px solid rgba(99,179,237,0.2)',
-        padding: 24,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 20,
-      }}>
-        <div style={{ fontSize: 52, flexShrink: 0 }}>🃏</div>
-        <div style={{ flex: 1 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 4 }}>Flashcard Mode</h3>
-          <p style={{ fontSize: 13, opacity: 0.55, marginBottom: 14 }}>
-            Review vocabulary with interactive flashcards at your own pace
-          </p>
-          <button
-            onClick={() => { window.location.hash = 'flashcard'; }}
-            className="glow-btn glow-btn-purple"
-            style={{ fontSize: 13, padding: '11px 22px' }}
-          >
-            Start Flashcards →
-          </button>
-        </div>
-      </div>
 
       {/* ── Detailed sections ─────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
