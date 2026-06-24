@@ -527,7 +527,8 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       {/* ── Detailed sections ─────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <DailyChallenge />
-        <Leaderboard userData={userData} />
+        <Leaderboard userData={userData} currentUid={user?.uid} />
+
       </div>
 
       <AchievementsPanel userData={userData} />
