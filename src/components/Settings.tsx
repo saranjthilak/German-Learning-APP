@@ -5,14 +5,17 @@ import { StorageManager } from '../utils/storage';
 interface SettingsProps {
   onClose: () => void;
   userData: UserData;
+  onSaveUserData: (updated: UserData) => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ onClose, userData }) => {
+const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }) => {
   const [playerName, setPlayerName]   = useState(userData.playerName);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleSaveName = () => {
     StorageManager.setPlayerName(playerName);
+    const updated = StorageManager.getUserData();
+    onSaveUserData(updated);
     alert('Player name updated!');
   };
 

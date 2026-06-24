@@ -78,6 +78,11 @@ const AppInner: React.FC = () => {
     window.location.hash = '';
   }, [currentGame, user]);
 
+  const handleSaveUserData = useCallback((updated: UserData) => {
+    setUserData(updated);
+    if (user) saveCloudData(user.uid, updated);
+  }, [user]);
+
   // Navigate to tab
   const goTab = (tab: Tab) => {
     setActiveTab(tab);
@@ -94,7 +99,7 @@ const AppInner: React.FC = () => {
 
   // ── Render content ──────────────────────────────────────────────────────────
   const renderContent = () => {
-    if (showSettings) return <Settings onClose={() => { window.location.hash = ''; }} userData={userData} />;
+    if (showSettings) return <Settings onClose={() => { window.location.hash = ''; }} userData={userData} onSaveUserData={handleSaveUserData} />;
     if (currentGame === 'matching')     return <MatchingGame onComplete={handleGameComplete} />;
     if (currentGame === 'memory')       return <MemoryGame   onComplete={handleGameComplete} />;
     if (currentGame === 'quiz')         return <QuizGame     onComplete={handleGameComplete} />;
