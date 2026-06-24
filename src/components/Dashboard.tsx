@@ -7,12 +7,14 @@ import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
 import DailyChallenge from './DailyChallenge';
 import FlashcardMode from './FlashcardMode';
+import GameMenu from './GameMenu';
 
 interface DashboardProps {
   userData: UserData;
   user?: User | null;
   syncing?: boolean;
   onStartTutor?: () => void;
+  onSelectGame?: (game: 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor') => void;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -72,7 +74,7 @@ const CircleRing: React.FC<{ pct: number; size?: number; stroke?: number; color?
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor }) => {
+const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame }) => {
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
   const [mascotWiggle, setMascotWiggle] = useState(false);
   const TOTAL_WORDS = germanVocabulary.length;
@@ -432,6 +434,9 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
           </button>
         </div>
       </div>
+
+      {/* ── Choose Your Game ──────────────────────────────────────────────── */}
+      {onSelectGame && <GameMenu onSelectGame={onSelectGame} />}
 
       {/* ── Achievement Badges ───────────────────────────────────────────── */}
       <div className="game-card" style={{

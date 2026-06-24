@@ -3,7 +3,6 @@ import { StorageManager } from './utils/storage';
 import { UserData } from './types';
 import { AuthProvider, useAuth, loadCloudData, saveCloudData } from './contexts/AuthContext';
 import Dashboard from './components/Dashboard';
-import GameMenu from './components/GameMenu';
 import MatchingGame from './components/games/MatchingGame';
 import MemoryGame from './components/games/MemoryGame';
 import QuizGame from './components/games/QuizGame';
@@ -104,17 +103,13 @@ const AppInner: React.FC = () => {
     if (currentGame === 'voice-tutor')  return <VoiceTutor onClose={() => { window.location.hash = ''; }} />;
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-        <Dashboard
-          userData={userData}
-          user={user}
-          syncing={syncing}
-          onStartTutor={() => { window.location.hash = 'game-voice-tutor'; }}
-        />
-        {activeTab !== 'tutor' && (
-          <GameMenu onSelectGame={(game) => { window.location.hash = `game-${game}`; }} />
-        )}
-      </div>
+      <Dashboard
+        userData={userData}
+        user={user}
+        syncing={syncing}
+        onStartTutor={() => { window.location.hash = 'game-voice-tutor'; }}
+        onSelectGame={(game) => { window.location.hash = `game-${game}`; }}
+      />
     );
   };
 
