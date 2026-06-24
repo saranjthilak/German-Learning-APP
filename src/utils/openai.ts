@@ -146,22 +146,26 @@ If the learner's message contains: English words, "umm", "uh", "I don't know", "
 - Keep it conversational and human.
 - Maximum 3-4 sentences per response.`;
 
-// ── API key / model storage ───────────────────────────────────────────────────────────────
+// ── API key / model ──────────────────────────────────────────────────────────
+// The key is read from the Vercel environment variable VITE_GEMINI_API_KEY.
+// It is NEVER shown in the UI. Local dev fallback: set VITE_GEMINI_API_KEY in .env.local
+// or store temporarily in localStorage for testing purposes only.
 
-export const OPENAI_KEY_STORAGE   = 'german-tutor-gemini-key';    // kept name for import compat
-export const OPENAI_MODEL_STORAGE = 'german-tutor-gemini-model';  // kept name for import compat
+export const OPENAI_KEY_STORAGE   = 'german-tutor-gemini-key';   // kept for import compat
+export const OPENAI_MODEL_STORAGE = 'german-tutor-gemini-model'; // kept for import compat
 
+/** Always use the env-var key; never expose it to users via UI. */
 export const getStoredApiKey = (): string =>
-  localStorage.getItem(OPENAI_KEY_STORAGE) ?? '';
+  (import.meta.env.VITE_GEMINI_API_KEY as string) ||
+  localStorage.getItem(OPENAI_KEY_STORAGE) ||
+  '';
 
-export const getStoredModel = (): string =>
-  localStorage.getItem(OPENAI_MODEL_STORAGE) ?? 'gemini-2.5-flash';
+/** Model is fixed — not configurable by users. */
+export const getStoredModel = (): string => 'gemini-2.5-flash';
 
-export const saveApiKey = (key: string): void =>
-  localStorage.setItem(OPENAI_KEY_STORAGE, key);
-
-export const saveModel = (model: string): void =>
-  localStorage.setItem(OPENAI_MODEL_STORAGE, model);
+/** No-ops kept for import compatibility — key is managed via env vars now. */
+export const saveApiKey = (_key: string): void => {};
+export const saveModel  = (_model: string): void => {};
 
 // ── Gemini API call ─────────────────────────────────────────────────────────────────
 
@@ -220,7 +224,6 @@ export const sendMessage = async (
   }
 
   const data = await response.json();
-  console.log('Gemini API Response:', data);
 
   if (data.promptFeedback?.blockReason) {
     throw new Error(`BLOCKED_BY_SAFETY: ${data.promptFeedback.blockReason}`);
