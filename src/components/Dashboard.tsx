@@ -5,7 +5,6 @@ import { StorageManager } from '../utils/storage';
 import { germanVocabulary } from '../data/vocabulary';
 import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
-import DailyChallenge from './DailyChallenge';
 import FlashcardMode from './FlashcardMode';
 import GameMenu from './GameMenu';
 
@@ -15,7 +14,6 @@ interface DashboardProps {
   syncing?: boolean;
   onStartTutor?: () => void;
   onSelectGame?: (game: 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor') => void;
-  onSaveUserData: (updated: UserData) => void;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -75,7 +73,7 @@ const CircleRing: React.FC<{ pct: number; size?: number; stroke?: number; color?
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame, onSaveUserData }) => {
+const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame }) => {
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
   const [mascotWiggle, setMascotWiggle] = useState(false);
   const TOTAL_WORDS = germanVocabulary.length;
@@ -534,10 +532,8 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
 
 
       {/* ── Detailed sections ─────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <DailyChallenge userData={userData} onSaveUserData={onSaveUserData} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
         <Leaderboard userData={userData} currentUid={user?.uid} />
-
       </div>
 
       <AchievementsPanel userData={userData} />

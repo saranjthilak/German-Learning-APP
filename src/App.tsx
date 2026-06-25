@@ -114,7 +114,6 @@ const AppInner: React.FC = () => {
         syncing={syncing}
         onStartTutor={() => { window.location.hash = 'game-voice-tutor'; }}
         onSelectGame={(game) => { window.location.hash = `game-${game}`; }}
-        onSaveUserData={handleSaveUserData}
       />
     );
   };
