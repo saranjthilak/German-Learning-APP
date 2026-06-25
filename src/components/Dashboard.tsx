@@ -98,10 +98,18 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
     100
   );
 
-  // Daily goal: 100 XP or 5 games per day
+  // Daily goal: 100 XP
+  const todayStr = new Date().toDateString();
+  const gameXP = (userData.gameSessions || [])
+    .filter(session => session.timestamp && new Date(session.timestamp).toDateString() === todayStr)
+    .reduce((sum, session) => sum + (session.xpEarned || 0), 0);
+  const challengeXP = (userData.dailyChallenges || [])
+    .filter(c => c.date === todayStr && c.completed)
+    .length * 50;
+  const todayXP = gameXP + challengeXP;
+
   const DAILY_GOAL_XP = 100;
-  const todayXP = Math.min(userData.stats.totalXP % DAILY_GOAL_XP || DAILY_GOAL_XP, DAILY_GOAL_XP);
-  const dailyPct = (todayXP / DAILY_GOAL_XP) * 100;
+  const dailyPct = Math.min((todayXP / DAILY_GOAL_XP) * 100, 100);
   const dailyColor = dailyPct < 33 ? '#ef4444' : dailyPct < 66 ? '#f97316' : '#22c55e';
 
   const unlockedCount = userData.achievements.filter(a => a.unlocked).length;
