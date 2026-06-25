@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StorageManager } from '../utils/storage';
 import { germanVocabulary } from '../data/vocabulary';
+import { UserData } from '../types';
 
-const DailyChallenge: React.FC = () => {
+interface DailyChallengeProps {
+  userData: UserData;
+  onSaveUserData: (updated: UserData) => void;
+}
+
+const DailyChallenge: React.FC<DailyChallengeProps> = ({ userData, onSaveUserData }) => {
   const [challenge, setChallenge] = useState<any>(null);
   const [completionDate, setCompletionDate] = useState<string | null>(null);
 
@@ -11,14 +17,19 @@ const DailyChallenge: React.FC = () => {
     setChallenge(dailyChallenge);
 
     // Check if already completed today
-    if (dailyChallenge.completed) {
-      setCompletionDate(new Date().toDateString());
+    const today = new Date().toDateString();
+    const todayChallenge = userData.dailyChallenges.find(c => c.date === today);
+    if (todayChallenge?.completed) {
+      setCompletionDate(today);
+    } else {
+      setCompletionDate(null);
     }
-  }, []);
+  }, [userData]);
 
   const handleComplete = () => {
     if (challenge) {
-      StorageManager.completeDailyChallenge();
+      const updated = StorageManager.completeDailyChallenge();
+      onSaveUserData(updated);
       setCompletionDate(new Date().toDateString());
     }
   };

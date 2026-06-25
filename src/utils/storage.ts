@@ -252,15 +252,24 @@ export const StorageManager = {
   },
 
   // Complete daily challenge
-  completeDailyChallenge: (): void => {
+  completeDailyChallenge: (): UserData => {
     const userData = StorageManager.getUserData();
     const today = new Date().toDateString();
     const challenge = userData.dailyChallenges.find(c => c.date === today);
 
-    if (challenge) {
+    if (challenge && !challenge.completed) {
       challenge.completed = true;
+      userData.stats.currentStreak += 1;
+      if (userData.stats.currentStreak > userData.stats.bestStreak) {
+        userData.stats.bestStreak = userData.stats.currentStreak;
+      }
+      userData.stats.totalXP += 50;
+      userData.stats.level = Math.floor(userData.stats.totalXP / 100) + 1;
+      StorageManager.saveUserData(userData);
+      StorageManager.checkAchievements(userData);
       StorageManager.saveUserData(userData);
     }
+    return userData;
   },
 
   // Reset streak if missed a day

@@ -15,6 +15,7 @@ interface DashboardProps {
   syncing?: boolean;
   onStartTutor?: () => void;
   onSelectGame?: (game: 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor') => void;
+  onSaveUserData: (updated: UserData) => void;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -74,7 +75,7 @@ const CircleRing: React.FC<{ pct: number; size?: number; stroke?: number; color?
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame }) => {
+const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame, onSaveUserData }) => {
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
   const [mascotWiggle, setMascotWiggle] = useState(false);
   const TOTAL_WORDS = germanVocabulary.length;
@@ -526,7 +527,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
 
       {/* ── Detailed sections ─────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <DailyChallenge />
+        <DailyChallenge userData={userData} onSaveUserData={onSaveUserData} />
         <Leaderboard userData={userData} currentUid={user?.uid} />
 
       </div>
