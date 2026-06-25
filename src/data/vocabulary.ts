@@ -1079,14 +1079,34 @@ export function getWordsByCategory(category: string): GermanWord[] {
   return germanVocabulary.filter(word => word.category === category);
 }
 
-export function getRandomWords(count: number): GermanWord[] {
-  const shuffled = [...germanVocabulary].sort(() => Math.random() - 0.5);
+export function getRandomWords(count: number, excludeIds?: string[]): GermanWord[] {
+  let pool = [...germanVocabulary];
+  if (excludeIds && excludeIds.length > 0) {
+    const filtered = pool.filter(w => !excludeIds.includes(w.id));
+    if (filtered.length >= count) {
+      pool = filtered;
+    } else if (filtered.length > 0) {
+      const learnedPool = pool.filter(w => excludeIds.includes(w.id)).sort(() => Math.random() - 0.5);
+      pool = [...filtered, ...learnedPool.slice(0, count - filtered.length)];
+    }
+  }
+  const shuffled = pool.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
 
-export function getRandomWordsByCategory(count: number, category: string): GermanWord[] {
+export function getRandomWordsByCategory(count: number, category: string, excludeIds?: string[]): GermanWord[] {
   const categoryWords = getWordsByCategory(category);
-  const shuffled = [...categoryWords].sort(() => Math.random() - 0.5);
+  let pool = [...categoryWords];
+  if (excludeIds && excludeIds.length > 0) {
+    const filtered = pool.filter(w => !excludeIds.includes(w.id));
+    if (filtered.length >= count) {
+      pool = filtered;
+    } else if (filtered.length > 0) {
+      const learnedPool = pool.filter(w => excludeIds.includes(w.id)).sort(() => Math.random() - 0.5);
+      pool = [...filtered, ...learnedPool.slice(0, count - filtered.length)];
+    }
+  }
+  const shuffled = pool.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
 

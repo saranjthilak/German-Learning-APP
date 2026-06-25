@@ -28,9 +28,10 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
   }, [gameStarted]);
 
   const startGame = () => {
+    const learnedIds = StorageManager.getUserData().learnedWords || [];
     const selectedWords = selectedCategory === 'All' 
-      ? getRandomWords(wordsCount)
-      : getRandomWordsByCategory(wordsCount, selectedCategory);
+      ? getRandomWords(wordsCount, learnedIds)
+      : getRandomWordsByCategory(wordsCount, selectedCategory, learnedIds);
     setWords(selectedWords);
     setEnglishWords(selectedWords.map(w => w.english).sort(() => Math.random() - 0.5));
     setGameStarted(true);

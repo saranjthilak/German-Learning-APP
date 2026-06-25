@@ -34,9 +34,10 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onComplete }) => {
   }, [gameStarted]);
 
   const startGame = () => {
+    const learnedIds = StorageManager.getUserData().learnedWords || [];
     const selectedWords = selectedCategory === 'All' 
-      ? getRandomWords(wordsCount)
-      : getRandomWordsByCategory(wordsCount, selectedCategory);
+      ? getRandomWords(wordsCount, learnedIds)
+      : getRandomWordsByCategory(wordsCount, selectedCategory, learnedIds);
     const gameCards: Card[] = [];
 
     selectedWords.forEach((word, index) => {

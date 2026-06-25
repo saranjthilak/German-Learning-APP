@@ -27,9 +27,10 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   }, [gameStarted]);
 
   const startGame = () => {
+    const learnedIds = StorageManager.getUserData().learnedWords || [];
     const selectedWords = selectedCategory === 'All' 
-      ? getRandomWords(wordsCount)
-      : getRandomWordsByCategory(wordsCount, selectedCategory);
+      ? getRandomWords(wordsCount, learnedIds)
+      : getRandomWordsByCategory(wordsCount, selectedCategory, learnedIds);
     setWords(selectedWords);
     setGameStarted(true);
   };

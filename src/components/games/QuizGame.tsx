@@ -30,9 +30,10 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   }, [gameStarted]);
 
   const startGame = () => {
+    const learnedIds = StorageManager.getUserData().learnedWords || [];
     const selectedWords = selectedCategory === 'All' 
-      ? getRandomWords(wordsCount)
-      : getRandomWordsByCategory(wordsCount, selectedCategory);
+      ? getRandomWords(wordsCount, learnedIds)
+      : getRandomWordsByCategory(wordsCount, selectedCategory, learnedIds);
     const gameQuestions: Question[] = selectedWords.map((word) => {
       const correctOption = word.english;
       const incorrectOptions = germanVocabulary
