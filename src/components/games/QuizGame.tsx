@@ -71,22 +71,22 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
     } else {
       StorageManager.addWeakWord(wordId, false);
     }
-  };
 
-  const handleNext = () => {
-    if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(prev => prev + 1);
-      setSelectedAnswer(null);
-      setShowResult(false);
-    } else {
-      completeGame();
-    }
-  };
-
-  const completeGame = () => {
-    const accuracy = Math.round((correctAnswers / wordsCount) * 100);
-    const xpEarned = Math.round((correctAnswers / wordsCount) * 50) + (accuracy > 80 ? 20 : 0);
-    onComplete(xpEarned, accuracy, correctAnswers, wordsCount);
+    // Auto-advance to the next question or complete game after 1 second
+    setTimeout(() => {
+      if (currentQuestion + 1 < questions.length) {
+        setCurrentQuestion(prev => prev + 1);
+        setSelectedAnswer(null);
+        setShowResult(false);
+      } else {
+        setCorrectAnswers(latestCorrect => {
+          const accuracy = Math.round((latestCorrect / wordsCount) * 100);
+          const xpEarned = Math.round((latestCorrect / wordsCount) * 50) + (accuracy > 80 ? 20 : 0);
+          onComplete(xpEarned, accuracy, latestCorrect, wordsCount);
+          return latestCorrect;
+        });
+      }
+    }, 1000);
   };
 
   if (!gameStarted) {
@@ -219,16 +219,6 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
             {question.word.pronunciation}
           </p>
         </div>
-      )}
-
-      {/* Next Button */}
-      {showResult && (
-        <button
-          onClick={handleNext}
-          className="button-primary w-full text-lg"
-        >
-          {currentQuestion + 1 === wordsCount ? 'Complete Quiz' : 'Next Question'} →
-        </button>
       )}
     </div>
   );
