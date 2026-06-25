@@ -127,7 +127,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* ── User welcome banner ──────────────────────────────────────────── */}
       {user ? (
@@ -135,17 +135,17 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
           background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(168,85,247,0.15))',
           border: '1px solid rgba(99,179,237,0.2)',
           borderRadius: 20,
-          padding: '14px 20px',
+          padding: '10px 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
-              width: 44, height: 44, borderRadius: '50%', overflow: 'hidden',
+              width: 38, height: 38, borderRadius: '50%', overflow: 'hidden',
               background: 'linear-gradient(135deg,#63b3ed,#7c3aed)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 800, fontSize: 16, color: 'white', flexShrink: 0,
+              fontWeight: 800, fontSize: 14, color: 'white', flexShrink: 0,
             }}>
               {user.photoURL
                 ? <img src={user.photoURL} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -153,14 +153,14 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
               }
             </div>
             <div>
-              <p style={{ fontWeight: 800, fontSize: 15 }}>
+              <p style={{ fontWeight: 800, fontSize: 14 }}>
                 Willkommen, {user.displayName?.split(' ')[0] ?? 'Learner'}! 👋
               </p>
-              <p style={{ fontSize: 12, opacity: 0.45 }}>{user.email}</p>
+              <p style={{ fontSize: 11, opacity: 0.45 }}>{user.email}</p>
             </div>
           </div>
           <span style={{
-            fontSize: 12, fontWeight: 700,
+            fontSize: 11, fontWeight: 700,
             color: syncing ? '#60a5fa' : '#4ade80',
           }}>
             {syncing ? '⟳ Syncing…' : '☁ Synced'}
@@ -170,11 +170,11 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         <div style={{
           background: 'rgba(251,191,36,0.07)',
           border: '1px solid rgba(251,191,36,0.18)',
-          borderRadius: 20, padding: '12px 20px',
+          borderRadius: 20, padding: '10px 16px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <p style={{ fontSize: 14, opacity: 0.7 }}>🔒 Guest mode — progress saved locally</p>
-          <span style={{ fontSize: 12, opacity: 0.45 }}>Sign in to sync</span>
+          <p style={{ fontSize: 13, opacity: 0.7 }}>🔒 Guest mode — progress saved locally</p>
+          <span style={{ fontSize: 11, opacity: 0.45 }}>Sign in to sync</span>
         </div>
       )}
 
@@ -183,11 +183,11 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         className="animate-slide-up"
         style={{
           background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a5f 100%)',
-          borderRadius: 24,
-          padding: '28px 24px',
+          borderRadius: 20,
+          padding: '18px 20px',
           display: 'flex',
           alignItems: 'center',
-          gap: 20,
+          gap: 16,
           border: '1px solid rgba(99,179,237,0.15)',
           boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
           position: 'relative',
@@ -201,7 +201,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         <div
           className={`animate-float ${mascotWiggle ? 'animate-wiggle' : ''}`}
           onClick={() => { setMascotWiggle(true); setTimeout(() => setMascotWiggle(false), 600); }}
-          style={{ fontSize: 72, cursor: 'pointer', flexShrink: 0, userSelect: 'none', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}
+          style={{ fontSize: 56, cursor: 'pointer', flexShrink: 0, userSelect: 'none', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}
           title="Click me!"
         >
           🦉
@@ -209,13 +209,13 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
 
         {/* Text */}
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 13, color: 'rgba(167,139,250,0.9)', fontWeight: 700, marginBottom: 4 }}>
+          <p style={{ fontSize: 12, color: 'rgba(167,139,250,0.9)', fontWeight: 700, marginBottom: 2 }}>
             Your daily German coach
           </p>
-          <h2 style={{ fontSize: 24, fontWeight: 900, lineHeight: 1.2, marginBottom: 8 }}>
+          <h2 style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.2, marginBottom: 6 }}>
             Guten Tag! Ready to<br/>speak German today? 🇩🇪
           </h2>
-          <p style={{ fontSize: 13, opacity: 0.55, marginBottom: 16 }}>
+          <p style={{ fontSize: 12, opacity: 0.55, marginBottom: 10 }}>
             Level {userData.stats.level} · {getLevelName(userData.stats.level)}
           </p>
 
@@ -240,23 +240,23 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       </div>
 
       {/* ── 4 Animated Stat Cards ─────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}
         className="sm:grid-cols-4">
         {/* Streak */}
         <div className="stat-card animate-slide-up" style={{
           background: 'linear-gradient(135deg, #7c2d12, #ea580c)',
           animation: 'slide-up 0.5s 0.1s ease-out both',
         }}>
-          <div style={{ fontSize: 28, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>🔥</div>
-          <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1, color: '#fed7aa' }}>
+          <div style={{ fontSize: 22, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>🔥</div>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#fed7aa' }}>
             <AnimatedNumber target={userData.stats.currentStreak} />
           </div>
-          <div style={{ fontSize: 12, opacity: 0.75, fontWeight: 700 }}>Day Streak</div>
+          <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Day Streak</div>
           {userData.stats.currentStreak > 0 && (
             <div style={{
-              position: 'absolute', top: 12, right: 12,
+              position: 'absolute', top: 8, right: 8,
               animation: 'pulse-ring 2s infinite',
-              width: 10, height: 10, borderRadius: '50%', background: '#fed7aa',
+              width: 8, height: 8, borderRadius: '50%', background: '#fed7aa',
             }} />
           )}
         </div>
@@ -266,11 +266,11 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
           background: 'linear-gradient(135deg, #713f12, #ca8a04)',
           animation: 'slide-up 0.5s 0.2s ease-out both',
         }}>
-          <div style={{ fontSize: 28 }}>⚡</div>
-          <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1, color: '#fef08a' }}>
+          <div style={{ fontSize: 22 }}>⚡</div>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#fef08a' }}>
             <AnimatedNumber target={userData.stats.totalXP} />
           </div>
-          <div style={{ fontSize: 12, opacity: 0.75, fontWeight: 700 }}>Total XP</div>
+          <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Total XP</div>
         </div>
 
         {/* Words */}
@@ -278,11 +278,11 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
           background: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
           animation: 'slide-up 0.5s 0.3s ease-out both',
         }}>
-          <div style={{ fontSize: 28 }}>📚</div>
-          <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1, color: '#bfdbfe' }}>
+          <div style={{ fontSize: 22 }}>📚</div>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#bfdbfe' }}>
             <AnimatedNumber target={userData.stats.wordsLearned} />
           </div>
-          <div style={{ fontSize: 12, opacity: 0.75, fontWeight: 700 }}>Words Learned</div>
+          <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Words Learned</div>
         </div>
 
         {/* Accuracy */}
@@ -290,42 +290,42 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
           background: 'linear-gradient(135deg, #14532d, #16a34a)',
           animation: 'slide-up 0.5s 0.4s ease-out both',
         }}>
-          <div style={{ fontSize: 28 }}>🎯</div>
-          <div style={{ fontSize: 36, fontWeight: 900, lineHeight: 1, color: '#bbf7d0' }}>
+          <div style={{ fontSize: 22 }}>🎯</div>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#bbf7d0' }}>
             <AnimatedNumber target={userData.stats.accuracy} suffix="%" />
           </div>
-          <div style={{ fontSize: 12, opacity: 0.75, fontWeight: 700 }}>Accuracy</div>
+          <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Accuracy</div>
         </div>
       </div>
 
       {/* ── Daily Goal + Today's Challenge ────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
 
         {/* Daily Goal */}
         <div className="game-card" style={{
           background: 'linear-gradient(135deg, #1f2937, #111827)',
           border: `1px solid ${dailyColor}33`,
-          padding: 20,
+          padding: 14,
           boxShadow: `0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px ${dailyColor}22`,
         }}>
-          <p style={{ fontSize: 13, fontWeight: 800, opacity: 0.6, marginBottom: 12 }}>📅 DAILY GOAL</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <p style={{ fontSize: 11, fontWeight: 800, opacity: 0.6, marginBottom: 8 }}>📅 DAILY GOAL</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
-              <CircleRing pct={dailyPct} size={72} stroke={7} color={dailyColor} />
+              <CircleRing pct={dailyPct} size={56} stroke={6} color={dailyColor} />
               <div style={{
                 position: 'absolute', inset: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 12, fontWeight: 900, color: dailyColor,
+                fontSize: 10, fontWeight: 900, color: dailyColor,
               }}>
                 {Math.round(dailyPct)}%
               </div>
             </div>
             <div>
-              <p style={{ fontSize: 22, fontWeight: 900, color: dailyColor }}>
-                {todayXP}<span style={{ fontSize: 13, opacity: 0.6 }}>/{DAILY_GOAL_XP} XP</span>
+              <p style={{ fontSize: 18, fontWeight: 900, color: dailyColor }}>
+                {todayXP}<span style={{ fontSize: 11, opacity: 0.6 }}>/{DAILY_GOAL_XP} XP</span>
               </p>
-              <p style={{ fontSize: 12, opacity: 0.5, marginTop: 3 }}>
-                {dailyPct >= 100 ? '🎉 Goal reached!' : `${DAILY_GOAL_XP - todayXP} XP to go`}
+              <p style={{ fontSize: 11, opacity: 0.5, marginTop: 1 }}>
+                {dailyPct >= 100 ? '🎉 Reached!' : `${DAILY_GOAL_XP - todayXP} XP to go`}
               </p>
             </div>
           </div>
@@ -335,35 +335,35 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         <div className="game-card" style={{
           background: 'linear-gradient(135deg, #3d2a00, #92400e)',
           border: '1px solid rgba(250,204,21,0.3)',
-          padding: 20,
+          padding: 14,
           boxShadow: '0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(250,204,21,0.15)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: '#fcd34d' }}>⚡ TODAY'S CHALLENGE</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+            <span style={{ fontSize: 11, fontWeight: 800, color: '#fcd34d' }}>⚡ CHALLENGE</span>
             <span style={{
-              fontSize: 10, fontWeight: 800, padding: '2px 7px', borderRadius: 999,
+              fontSize: 9, fontWeight: 800, padding: '1px 5px', borderRadius: 999,
               background: 'rgba(250,204,21,0.2)', color: '#facc15', border: '1px solid rgba(250,204,21,0.35)',
             }}>+50 XP</span>
           </div>
-          <p style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>
+          <p style={{ fontSize: 13, fontWeight: 800, marginBottom: 2 }}>
             🎯 Complete 3 Quiz rounds
           </p>
-          <p style={{ fontSize: 12, opacity: 0.55, marginBottom: 12 }}>
-            Score 80%+ accuracy to unlock the bonus
+          <p style={{ fontSize: 11, opacity: 0.55, marginBottom: 8 }}>
+            80%+ accuracy required
           </p>
           <button
             onClick={() => { window.location.hash = 'game-quiz'; }}
             style={{
-              width: '100%', padding: '9px 0',
+              width: '100%', padding: '6px 0',
               background: 'linear-gradient(135deg, #ca8a04, #facc15)',
-              color: '#1a0a00', fontWeight: 900, fontSize: 13,
-              border: 'none', borderRadius: 12, cursor: 'pointer',
+              color: '#1a0a00', fontWeight: 900, fontSize: 11,
+              border: 'none', borderRadius: 8, cursor: 'pointer',
               transition: 'transform 0.15s, box-shadow 0.15s',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
           >
-            Accept Challenge →
+            Start Quiz →
           </button>
         </div>
       </div>
@@ -372,45 +372,45 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       <div className="game-card animate-slide-up" style={{
         background: 'linear-gradient(135deg, #0a1628 0%, #1a0e3d 40%, #0d2818 100%)',
         border: '1px solid rgba(34,197,94,0.25)',
-        padding: '32px 28px',
+        padding: '20px 20px',
         display: 'flex',
         alignItems: 'center',
-        gap: 24,
+        gap: 18,
         boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(34,197,94,0.1)',
         position: 'relative',
         overflow: 'hidden',
       }}>
-        <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.12), transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.1), transparent 65%)', pointerEvents: 'none' }} />
 
         {/* Mic Icon */}
         <div style={{ flexShrink: 0, textAlign: 'center' }}>
           <div style={{
-            width: 80, height: 80, borderRadius: '50%',
+            width: 60, height: 60, borderRadius: '50%',
             background: 'linear-gradient(135deg, #22c55e, #16a34a)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 38,
+            fontSize: 28,
             animation: 'pulse-green 2.5s infinite',
-            boxShadow: '0 4px 20px rgba(34,197,94,0.4)',
+            boxShadow: '0 4px 15px rgba(34,197,94,0.3)',
           }}>
             🎙️
           </div>
         </div>
 
         <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <h3 style={{ fontSize: 22, fontWeight: 900 }}>AI Voice Tutor</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 900 }}>AI Voice Tutor</h3>
             <span style={{
-              fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 999,
+              fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 999,
               background: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)',
             }}>LENA ✨</span>
           </div>
-          <p style={{ fontSize: 13, opacity: 0.6, marginBottom: 16, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, opacity: 0.6, marginBottom: 12, lineHeight: 1.4 }}>
             Have a real German conversation with your AI tutor. Get instant help when you struggle.
           </p>
           <button
             className="glow-btn glow-btn-green"
             onClick={() => onStartTutor?.()}
-            style={{ fontSize: 15, padding: '14px 28px' }}
+            style={{ fontSize: 13, padding: '10px 20px', borderRadius: 12 }}
           >
             🎙️ Start Speaking Now
           </button>
@@ -421,21 +421,21 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       <div className="game-card" style={{
         background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
         border: '1px solid rgba(99,179,237,0.2)',
-        padding: 24,
+        padding: 16,
         display: 'flex',
         alignItems: 'center',
-        gap: 20,
+        gap: 16,
       }}>
-        <div style={{ fontSize: 52, flexShrink: 0 }}>🃏</div>
+        <div style={{ fontSize: 36, flexShrink: 0 }}>🃏</div>
         <div style={{ flex: 1 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, marginBottom: 4 }}>Flashcard Mode</h3>
-          <p style={{ fontSize: 13, opacity: 0.55, marginBottom: 14 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 900, marginBottom: 2 }}>Flashcard Mode</h3>
+          <p style={{ fontSize: 12, opacity: 0.55, marginBottom: 10 }}>
             Review vocabulary with interactive flashcards at your own pace
           </p>
           <button
             onClick={() => { window.location.hash = 'flashcard'; }}
             className="glow-btn glow-btn-purple"
-            style={{ fontSize: 13, padding: '11px 22px' }}
+            style={{ fontSize: 12, padding: '8px 16px', borderRadius: 10 }}
           >
             Start Flashcards →
           </button>

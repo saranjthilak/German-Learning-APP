@@ -102,11 +102,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
     <div className="game-card" style={{
       background: '#1a1a2e',
       border: '1px solid rgba(255,255,255,0.07)',
-      padding: 24,
+      padding: 16,
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-        <h3 style={{ fontWeight: 900, fontSize: 18 }}>🏆 Global Leaderboard</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 style={{ fontWeight: 900, fontSize: 16 }}>🏆 Global Leaderboard</h3>
         <button
           onClick={() => setLastRefresh(Date.now())}
           title="Refresh"
@@ -156,8 +156,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
               <div
                 key={entry.uid}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '12px 14px', borderRadius: 14,
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '8px 12px', borderRadius: 12,
                   background: me
                     ? 'linear-gradient(135deg,rgba(99,179,237,0.15),rgba(168,85,247,0.15))'
                     : rank
@@ -170,13 +170,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
                     : '1px solid rgba(255,255,255,0.06)',
                   transition: 'transform 0.15s',
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateX(3px)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateX(2px)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
               >
                 {/* Rank */}
                 <div style={{
-                  fontSize: rank ? 22 : 15, fontWeight: 900,
-                  width: 28, textAlign: 'center', flexShrink: 0,
+                  fontSize: rank ? 18 : 13, fontWeight: 900,
+                  width: 24, textAlign: 'center', flexShrink: 0,
                   color: rank ? 'white' : 'rgba(255,255,255,0.4)',
                 }}>
                   {rank ? rank.label : `${idx + 1}`}
@@ -184,12 +184,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
 
                 {/* Avatar */}
                 <div style={{
-                  width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+                  width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
                   background: me
                     ? 'linear-gradient(135deg,#63b3ed,#7c3aed)'
                     : 'rgba(255,255,255,0.12)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 13, fontWeight: 900,
+                  fontSize: 11, fontWeight: 900,
                 }}>
                   {entry.playerName.slice(0, 2).toUpperCase()}
                 </div>
