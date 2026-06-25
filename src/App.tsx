@@ -12,6 +12,7 @@ import Settings from './components/Settings';
 import AuthModal from './components/AuthModal';
 import VoiceTutor from './components/VoiceTutor';
 import Confetti from './components/Confetti';
+import GameMenu from './components/GameMenu';
 import './index.css';
 
 type GameType = 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor' | null;
@@ -106,6 +107,14 @@ const AppInner: React.FC = () => {
     if (currentGame === 'typing')       return <TypingGame   onComplete={handleGameComplete} />;
     if (currentGame === 'pronunciation') return <PronunciationGame onComplete={handleGameComplete} />;
     if (currentGame === 'voice-tutor')  return <VoiceTutor onClose={() => { window.location.hash = ''; }} />;
+
+    if (activeTab === 'games') {
+      return (
+        <div className="animate-slide-up">
+          <GameMenu onSelectGame={(game: 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor') => { window.location.hash = `game-${game}`; }} />
+        </div>
+      );
+    }
 
     return (
       <Dashboard

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { User } from 'firebase/auth';
 import { UserData } from '../types';
-import { StorageManager } from '../utils/storage';
-import { germanVocabulary } from '../data/vocabulary';
 import AchievementsPanel from './AchievementsPanel';
 import Leaderboard from './Leaderboard';
 import FlashcardMode from './FlashcardMode';
@@ -76,8 +74,6 @@ const CircleRing: React.FC<{ pct: number; size?: number; stroke?: number; color?
 const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame }) => {
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
   const [mascotWiggle, setMascotWiggle] = useState(false);
-  const TOTAL_WORDS = germanVocabulary.length;
-
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
@@ -88,7 +84,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const weakWordsStats = StorageManager.getWeakWordsStats();
   const currentLevelXP = userData.stats.level * 100;
   const nextLevelXP = getNextLevelXP(userData.stats.level);
   const xpProgress = Math.min(
@@ -109,18 +104,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
   const DAILY_GOAL_XP = 100;
   const dailyPct = Math.min((todayXP / DAILY_GOAL_XP) * 100, 100);
   const dailyColor = dailyPct < 33 ? '#ef4444' : dailyPct < 66 ? '#f97316' : '#22c55e';
-
-  const unlockedCount = userData.achievements.filter(a => a.unlocked).length;
-
-  // Hardcoded achievement badges (may extend from userData.achievements)
-  const badges = [
-    { id: 'streak', icon: '🔥', label: 'Streak Master', desc: '7-day streak', unlocked: userData.stats.currentStreak >= 7, color: '#f97316' },
-    { id: 'vocab',  icon: '📖', label: 'Vocab Hero',    desc: '50 words learned', unlocked: userData.stats.wordsLearned >= 50, color: '#3b82f6' },
-    { id: 'acc',    icon: '🎯', label: 'Ace Accuracy',  desc: '90%+ accuracy', unlocked: userData.stats.accuracy >= 90, color: '#22c55e' },
-    { id: 'games',  icon: '🎮', label: 'Game Addict',   desc: '20 games played', unlocked: userData.stats.gamesCompleted >= 20, color: '#a855f7' },
-    { id: 'master', icon: '🏆', label: 'Level Master',  desc: 'Reach level 10', unlocked: userData.stats.level >= 10, color: '#facc15' },
-    { id: 'tutor',  icon: '🤖', label: 'AI Talker',     desc: 'Use Voice Tutor', unlocked: userData.stats.gamesCompleted >= 1, color: '#ec4899' },
-  ];
 
   if (showFlashcardMode) {
     return <FlashcardMode onClose={() => { window.location.hash = ''; }} />;
@@ -368,175 +351,94 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         </div>
       </div>
 
-      {/* ── AI Voice Tutor Hero ──────────────────────────────────────────── */}
-      <div className="game-card animate-slide-up" style={{
-        background: 'linear-gradient(135deg, #0a1628 0%, #1a0e3d 40%, #0d2818 100%)',
-        border: '1px solid rgba(34,197,94,0.25)',
-        padding: '20px 20px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 18,
-        boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(34,197,94,0.1)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.1), transparent 65%)', pointerEvents: 'none' }} />
+      {/* ── Tutor and Flashcard Side by Side ──────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* AI Voice Tutor Hero */}
+        <div className="game-card animate-slide-up" style={{
+          background: 'linear-gradient(135deg, #0a1628 0%, #1a0e3d 40%, #0d2818 100%)',
+          border: '1px solid rgba(34,197,94,0.25)',
+          padding: '20px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 18,
+          boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(34,197,94,0.1)',
+          position: 'relative',
+          overflow: 'hidden',
+          height: '100%',
+        }}>
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.1), transparent 65%)', pointerEvents: 'none' }} />
 
-        {/* Mic Icon */}
-        <div style={{ flexShrink: 0, textAlign: 'center' }}>
-          <div style={{
-            width: 60, height: 60, borderRadius: '50%',
-            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 28,
-            animation: 'pulse-green 2.5s infinite',
-            boxShadow: '0 4px 15px rgba(34,197,94,0.3)',
-          }}>
-            🎙️
+          {/* Mic Icon */}
+          <div style={{ flexShrink: 0, textAlign: 'center' }}>
+            <div style={{
+              width: 60, height: 60, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 28,
+              animation: 'pulse-green 2.5s infinite',
+              boxShadow: '0 4px 15px rgba(34,197,94,0.3)',
+            }}>
+              🎙️
+            </div>
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 900 }}>AI Voice Tutor</h3>
+              <span style={{
+                fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 999,
+                background: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)',
+              }}>LENA ✨</span>
+            </div>
+            <p style={{ fontSize: 12, opacity: 0.6, marginBottom: 12, lineHeight: 1.4 }}>
+              Have a real German conversation with your AI tutor. Get instant help when you struggle.
+            </p>
+            <button
+              className="glow-btn glow-btn-green"
+              onClick={() => onStartTutor?.()}
+              style={{ fontSize: 13, padding: '10px 20px', borderRadius: 12 }}
+            >
+              🎙️ Start Speaking Now
+            </button>
           </div>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-            <h3 style={{ fontSize: 18, fontWeight: 900 }}>AI Voice Tutor</h3>
-            <span style={{
-              fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 999,
-              background: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)',
-            }}>LENA ✨</span>
+        {/* Flashcard Mode Card */}
+        <div className="game-card" style={{
+          background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
+          border: '1px solid rgba(99,179,237,0.2)',
+          padding: 20,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          height: '100%',
+        }}>
+          <div style={{ fontSize: 36, flexShrink: 0 }}>🃏</div>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 900, marginBottom: 2 }}>Flashcard Mode</h3>
+            <p style={{ fontSize: 12, opacity: 0.55, marginBottom: 10 }}>
+              Review vocabulary with interactive flashcards at your own pace
+            </p>
+            <button
+              onClick={() => { window.location.hash = 'flashcard'; }}
+              className="glow-btn glow-btn-purple"
+              style={{ fontSize: 12, padding: '8px 16px', borderRadius: 10 }}
+            >
+              Start Flashcards →
+            </button>
           </div>
-          <p style={{ fontSize: 12, opacity: 0.6, marginBottom: 12, lineHeight: 1.4 }}>
-            Have a real German conversation with your AI tutor. Get instant help when you struggle.
-          </p>
-          <button
-            className="glow-btn glow-btn-green"
-            onClick={() => onStartTutor?.()}
-            style={{ fontSize: 13, padding: '10px 20px', borderRadius: 12 }}
-          >
-            🎙️ Start Speaking Now
-          </button>
-        </div>
-      </div>
-
-      {/* ── Flashcard Mode Card ───────────────────────────────────────────── */}
-      <div className="game-card" style={{
-        background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
-        border: '1px solid rgba(99,179,237,0.2)',
-        padding: 16,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 16,
-      }}>
-        <div style={{ fontSize: 36, flexShrink: 0 }}>🃏</div>
-        <div style={{ flex: 1 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 900, marginBottom: 2 }}>Flashcard Mode</h3>
-          <p style={{ fontSize: 12, opacity: 0.55, marginBottom: 10 }}>
-            Review vocabulary with interactive flashcards at your own pace
-          </p>
-          <button
-            onClick={() => { window.location.hash = 'flashcard'; }}
-            className="glow-btn glow-btn-purple"
-            style={{ fontSize: 12, padding: '8px 16px', borderRadius: 10 }}
-          >
-            Start Flashcards →
-          </button>
         </div>
       </div>
 
       {/* ── Choose Your Game ──────────────────────────────────────────────── */}
       {onSelectGame && <GameMenu onSelectGame={onSelectGame} />}
 
-      {/* ── Achievement Badges ───────────────────────────────────────────── */}
-      <div className="game-card" style={{
-        background: '#1a1a2e',
-        border: '1px solid rgba(255,255,255,0.06)',
-        padding: '20px 20px',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontWeight: 900, fontSize: 17 }}>🏅 Achievement Badges</h3>
-          <span style={{ fontSize: 12, opacity: 0.45 }}>
-            {unlockedCount}/{userData.achievements.length} unlocked
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4 }}>
-          {badges.map((b, i) => (
-            <div
-              key={b.id}
-              title={b.desc}
-              className="animate-bounce-in"
-              style={{
-                flexShrink: 0,
-                width: 84,
-                background: b.unlocked ? `${b.color}18` : 'rgba(255,255,255,0.04)',
-                border: `1.5px solid ${b.unlocked ? `${b.color}44` : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: 16,
-                padding: '12px 8px',
-                textAlign: 'center',
-                filter: b.unlocked ? 'none' : 'grayscale(1)',
-                opacity: b.unlocked ? 1 : 0.35,
-                cursor: 'default',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                animationDelay: `${i * 0.07}s`,
-              }}
-              onMouseEnter={e => {
-                if (b.unlocked) {
-                  (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px) scale(1.05)';
-                  (e.currentTarget as HTMLDivElement).style.boxShadow = `0 8px 20px ${b.color}44`;
-                }
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.transform = '';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '';
-              }}
-            >
-              <div style={{ fontSize: 28, marginBottom: 6 }}>{b.icon}</div>
-              <div style={{ fontSize: 10, fontWeight: 800, lineHeight: 1.3, color: b.unlocked ? b.color : 'inherit' }}>
-                {b.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Progress Bars ─────────────────────────────────────────────────── */}
-      <div className="game-card" style={{
-        background: '#1a1a2e',
-        border: '1px solid rgba(255,255,255,0.06)',
-        padding: 24,
-      }}>
-        <h3 style={{ fontWeight: 900, fontSize: 17, marginBottom: 20 }}>📈 Learning Progress</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {[
-            { label: 'Words Learned', val: userData.stats.wordsLearned, max: TOTAL_WORDS, gradient: 'linear-gradient(90deg,#3b82f6,#818cf8)', glow: 'rgba(59,130,246,0.4)' },
-            { label: 'Level Progress', val: xpProgress, max: 100, gradient: 'linear-gradient(90deg,#a855f7,#ec4899)', glow: 'rgba(168,85,247,0.4)' },
-            { label: 'Accuracy',       val: userData.stats.accuracy, max: 100, gradient: 'linear-gradient(90deg,#22c55e,#16a34a)', glow: 'rgba(34,197,94,0.4)' },
-            { label: 'Weak Words Mastered', val: weakWordsStats.mastered, max: Math.max(weakWordsStats.total, 1), gradient: 'linear-gradient(90deg,#f97316,#ef4444)', glow: 'rgba(249,115,22,0.4)' },
-          ].map(({ label, val, max, gradient, glow }) => {
-            const pct = Math.min((val / max) * 100, 100);
-            return (
-              <div key={label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, marginBottom: 8 }}>
-                  <span>{label}</span>
-                  <span style={{ opacity: 0.5 }}>{Math.round(pct)}%</span>
-                </div>
-                <div className="progress-track">
-                  <div
-                    className="progress-fill-animated"
-                    style={{ width: `${pct}%`, background: gradient, boxShadow: `0 0 8px ${glow}` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
 
       {/* ── Detailed sections ─────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Leaderboard userData={userData} currentUid={user?.uid} />
+        <AchievementsPanel userData={userData} />
       </div>
-
-      <AchievementsPanel userData={userData} />
     </div>
   );
 };

@@ -308,97 +308,111 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
   // ─────────────────────────────────────────────────────────────────────────
   // SETUP PHASE
   // ─────────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
+  // SETUP PHASE
+  // ─────────────────────────────────────────────────────────────────────────
   if (phase === 'setup') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' }}>
-        <div className="w-full max-w-2xl">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <div className="text-6xl mb-3">🎙️</div>
-            <h1 className="text-4xl font-bold text-white mb-2">AI Voice Tutor</h1>
-            <p className="text-blue-300 text-lg">Speak German with your personal AI tutor, Lena</p>
-          </div>
-
-          {/* API key warning */}
-          {!apiKey && (
-            <div className="mb-6 rounded-2xl px-5 py-4 text-sm"
-              style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', color: '#fbbf24' }}>
-              ⚠️ No Gemini API key found. Go to <strong>Settings ⚙️</strong> and add your key before starting.
+      <div className="flex flex-col animate-slide-up"
+        style={{
+          position: 'fixed',
+          top: 60,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+          overflowY: 'auto',
+        }}>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="w-full max-w-xl py-4">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="text-4xl mb-2">🎙️</div>
+              <h1 className="text-2xl font-bold text-white mb-1">AI Voice Tutor</h1>
+              <p className="text-blue-300 text-sm">Speak German with your personal AI tutor, Lena</p>
             </div>
-          )}
 
-          {/* Browser support warning */}
-          {!isSupported && (
-            <div className="mb-6 rounded-2xl px-5 py-4 text-sm"
-              style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#fca5a5' }}>
-              ⚠️ Your browser doesn't support voice input. Please use <strong>Chrome</strong> or <strong>Edge</strong>.
-            </div>
-          )}
-
-          <div className="space-y-6">
-            {/* Topic selector */}
-            <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <h3 className="text-white font-bold mb-4 text-lg">Choose a Topic</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                {TOPICS.map((t) => (
-                  <button key={t.id} id={`topic-${t.id}`}
-                    onClick={() => setTopic(t.id)}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-semibold transition-all duration-150"
-                    style={{
-                      background: topic === t.id ? `${t.color}33` : 'rgba(255,255,255,0.04)',
-                      border: topic === t.id ? `2px solid ${t.color}` : '2px solid transparent',
-                      color: topic === t.id ? 'white' : 'rgba(255,255,255,0.5)',
-                    }}
-                  >
-                    <span className="text-2xl">{t.icon}</span>
-                    {t.label}
-                  </button>
-                ))}
+            {/* API key warning */}
+            {!apiKey && (
+              <div className="mb-4 rounded-xl px-4 py-2.5 text-xs text-center"
+                style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', color: '#fbbf24' }}>
+                ⚠️ No Gemini API key found. Go to <strong>Settings ⚙️</strong> and add your key before starting.
               </div>
-            </div>
+            )}
 
-            {/* Level selector */}
-            <div className="rounded-2xl p-6" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <h3 className="text-white font-bold mb-4 text-lg">Your Level</h3>
-              <div className="grid grid-cols-5 gap-2">
-                {LEVELS.map((l) => (
-                  <button key={l.id} id={`level-${l.id}`}
-                    onClick={() => setLevel(l.id)}
-                    className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-150"
-                    style={{
-                      background: level === l.id ? 'rgba(99,179,237,0.2)' : 'rgba(255,255,255,0.04)',
-                      border: level === l.id ? '2px solid #63b3ed' : '2px solid transparent',
-                      color: level === l.id ? 'white' : 'rgba(255,255,255,0.45)',
-                    }}
-                  >
-                    <span className="text-lg font-bold">{l.label}</span>
-                    <span className="text-xs text-center leading-tight opacity-70">{l.desc.split('—')[0]}</span>
-                  </button>
-                ))}
+            {/* Browser support warning */}
+            {!isSupported && (
+              <div className="mb-4 rounded-xl px-4 py-2.5 text-xs text-center"
+                style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#fca5a5' }}>
+                ⚠️ Your browser doesn't support voice input. Please use <strong>Chrome</strong> or <strong>Edge</strong>.
               </div>
+            )}
+
+            <div className="space-y-4">
+              {/* Topic selector */}
+              <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <h3 className="text-white font-bold mb-3 text-sm">Choose a Topic</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {TOPICS.map((t) => (
+                    <button key={t.id} id={`topic-${t.id}`}
+                      onClick={() => setTopic(t.id)}
+                      className="flex flex-col items-center gap-1.5 p-2 rounded-xl text-[11px] font-semibold transition-all duration-150"
+                      style={{
+                        background: topic === t.id ? `${t.color}33` : 'rgba(255,255,255,0.04)',
+                        border: topic === t.id ? `2px solid ${t.color}` : '2px solid transparent',
+                        color: topic === t.id ? 'white' : 'rgba(255,255,255,0.5)',
+                      }}
+                    >
+                      <span className="text-xl">{t.icon}</span>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Level selector */}
+              <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <h3 className="text-white font-bold mb-3 text-sm">Your Level</h3>
+                <div className="grid grid-cols-5 gap-2">
+                  {LEVELS.map((l) => (
+                    <button key={l.id} id={`level-${l.id}`}
+                      onClick={() => setLevel(l.id)}
+                      className="flex flex-col items-center gap-0.5 p-2 rounded-xl transition-all duration-150"
+                      style={{
+                        background: level === l.id ? 'rgba(99,179,237,0.2)' : 'rgba(255,255,255,0.04)',
+                        border: level === l.id ? '2px solid #63b3ed' : '2px solid transparent',
+                        color: level === l.id ? 'white' : 'rgba(255,255,255,0.45)',
+                      }}
+                    >
+                      <span className="text-sm font-bold">{l.label}</span>
+                      <span className="text-[10px] text-center leading-tight opacity-70">{l.desc.split('—')[0]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Start button */}
+              <button id="start-session-btn"
+                onClick={startSession}
+                disabled={!apiKey || !isSupported}
+                className="w-full py-3.5 rounded-xl text-lg font-bold text-white transition-all duration-200"
+                style={{
+                  background: (!apiKey || !isSupported)
+                    ? 'rgba(255,255,255,0.1)'
+                    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  boxShadow: (!apiKey || !isSupported) ? 'none' : '0 8px 32px rgba(102,126,234,0.3)',
+                  cursor: (!apiKey || !isSupported) ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {currentTopic.icon} Start Conversation
+              </button>
+
+              <button onClick={onClose} className="w-full py-2 rounded-xl text-xs"
+                style={{ color: 'rgba(255,255,255,0.35)' }}>
+                ← Back to games
+              </button>
             </div>
-
-            {/* Start button */}
-            <button id="start-session-btn"
-              onClick={startSession}
-              disabled={!apiKey || !isSupported}
-              className="w-full py-5 rounded-2xl text-xl font-bold text-white transition-all duration-200"
-              style={{
-                background: (!apiKey || !isSupported)
-                  ? 'rgba(255,255,255,0.1)'
-                  : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                boxShadow: (!apiKey || !isSupported) ? 'none' : '0 8px 32px rgba(102,126,234,0.4)',
-                cursor: (!apiKey || !isSupported) ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {currentTopic.icon} Start Conversation
-            </button>
-
-            <button onClick={onClose} className="w-full py-3 rounded-xl text-sm"
-              style={{ color: 'rgba(255,255,255,0.35)' }}>
-              ← Back to games
-            </button>
           </div>
         </div>
       </div>
@@ -412,41 +426,52 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
     const userMsgs = messages.filter((m) => m.role === 'user').length;
     const xpEarned = Math.min(200, Math.round(elapsed / 10) * 5 + userMsgs * 3);
     return (
-      <div className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' }}>
-        <div className="w-full max-w-md text-center">
-          <div className="text-7xl mb-4">🎉</div>
-          <h2 className="text-3xl font-bold text-white mb-2">Great Session!</h2>
-          <p className="text-blue-300 mb-8">Du hast fantastisch gesprochen!</p>
+      <div className="flex flex-col"
+        style={{
+          position: 'fixed',
+          top: 60,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+          overflowY: 'auto',
+        }}>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="w-full max-w-md text-center py-4">
+            <div className="text-5xl mb-3">🎉</div>
+            <h2 className="text-2xl font-bold text-white mb-1">Great Session!</h2>
+            <p className="text-blue-300 text-sm mb-6">Du hast fantastisch gesprochen!</p>
 
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {[
-              { label: 'Speaking Time', value: formatDuration(elapsed), icon: '⏱' },
-              { label: 'XP Earned',     value: `+${xpEarned}`,          icon: '⭐' },
-              { label: 'Messages',      value: userMsgs,                 icon: '💬' },
-              { label: 'Help Requests', value: struggleCount,            icon: '🤝' },
-            ].map((stat) => (
-              <div key={stat.label} className="rounded-2xl p-5"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <div className="text-3xl mb-1">{stat.icon}</div>
-                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <div className="text-xs text-blue-300 mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {[
+                { label: 'Speaking Time', value: formatDuration(elapsed), icon: '⏱' },
+                { label: 'XP Earned',     value: `+${xpEarned}`,          icon: '⭐' },
+                { label: 'Messages',      value: userMsgs,                 icon: '💬' },
+                { label: 'Help Requests', value: struggleCount,            icon: '🤝' },
+              ].map((stat) => (
+                <div key={stat.label} className="rounded-xl p-4"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="text-2xl mb-1">{stat.icon}</div>
+                  <div className="text-lg font-bold text-white">{stat.value}</div>
+                  <div className="text-[10px] text-blue-300 mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </div>
 
-          <div className="space-y-3">
-            <button id="new-session-btn"
-              onClick={() => { setPhase('setup'); setMessages([]); setElapsed(0); }}
-              className="w-full py-4 rounded-2xl font-bold text-white"
-              style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-              🎙️ Start Another Session
-            </button>
-            <button id="back-to-games-btn" onClick={onClose}
-              className="w-full py-3 rounded-xl text-sm"
-              style={{ color: 'rgba(255,255,255,0.4)' }}>
-              ← Back to games
-            </button>
+            <div className="space-y-3">
+              <button id="new-session-btn"
+                onClick={() => { setPhase('setup'); setMessages([]); setElapsed(0); }}
+                className="w-full py-3 rounded-xl font-bold text-white text-sm"
+                style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+                🎙️ Start Another Session
+              </button>
+              <button id="back-to-games-btn" onClick={onClose}
+                className="w-full py-2 rounded-xl text-xs"
+                style={{ color: 'rgba(255,255,255,0.4)' }}>
+                ← Back to games
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -457,24 +482,32 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
   // SESSION PHASE
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col"
-      style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 60%, #24243e 100%)' }}>
+    <div className="flex flex-col animate-slide-up"
+      style={{
+        position: 'fixed',
+        top: 60,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 60%, #24243e 100%)',
+      }}>
 
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-6 py-4 flex-shrink-0"
+      <div className="flex items-center justify-between px-4 py-3 flex-shrink-0"
         style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{currentTopic.icon}</span>
+          <span className="text-xl">{currentTopic.icon}</span>
           <div>
-            <p className="text-white font-bold text-sm">{currentTopic.label}</p>
-            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Level {level} · {formatDuration(elapsed)}</p>
+            <p className="text-white font-bold text-xs">{currentTopic.label}</p>
+            <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>Level {level} · {formatDuration(elapsed)}</p>
           </div>
         </div>
 
         {/* AI Status pill */}
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full"
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
           style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <div className="w-2 h-2 rounded-full"
+          <div className="w-1.5 h-1.5 rounded-full"
             style={{
               background: aiStatus === 'error' ? '#ef4444'
                 : aiStatus === 'thinking' ? '#f59e0b'
@@ -484,30 +517,30 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
               boxShadow: aiStatus !== 'idle' ? `0 0 8px currentColor` : 'none',
               animation: aiStatus === 'thinking' || aiStatus === 'speaking' ? 'pulse 1s infinite' : 'none',
             }} />
-          <span className="text-xs font-medium capitalize" style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Lena is {aiStatus === 'idle' ? 'ready' : aiStatus}…
+          <span className="text-[10px] font-medium capitalize" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            {aiStatus === 'idle' ? 'ready' : aiStatus}
           </span>
         </div>
 
         <button id="end-session-btn" onClick={endSession}
-          className="px-4 py-2 rounded-xl text-sm font-semibold"
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold"
           style={{ background: 'rgba(239,68,68,0.15)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.25)' }}>
           End Session
         </button>
       </div>
 
       {/* ── Chat area ───────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4" style={{ maxHeight: 'calc(100vh - 220px)' }}>
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {messages.map((msg) => (
           <div key={msg.id}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm mr-2 flex-shrink-0 self-end"
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-2 flex-shrink-0 self-end"
                 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
                 🤖
               </div>
             )}
-            <div className="max-w-xs sm:max-w-md lg:max-w-lg rounded-2xl px-4 py-3"
+            <div className="max-w-xs sm:max-w-md lg:max-w-lg rounded-xl px-3.5 py-2.5"
               style={{
                 background: msg.role === 'user'
                   ? 'linear-gradient(135deg, #2563eb, #7c3aed)'
@@ -519,17 +552,17 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
                   : '1px solid rgba(255,255,255,0.07)',
               }}>
               {msg.role === 'assistant' && msg.language === 'mixed' && (
-                <div className="text-xs font-semibold mb-1" style={{ color: '#fbbf24' }}>
+                <div className="text-[10px] font-semibold mb-0.5" style={{ color: '#fbbf24' }}>
                   💡 English Help
                 </div>
               )}
-              <p className="text-white text-sm leading-relaxed">{msg.content}</p>
+              <p className="text-white text-xs leading-relaxed">{msg.content}</p>
               {msg.hadStruggle && (
-                <p className="text-xs mt-1 opacity-40">🤝 needed help</p>
+                <p className="text-[9px] mt-0.5 opacity-40">🤝 needed help</p>
               )}
             </div>
             {msg.role === 'user' && (
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm ml-2 flex-shrink-0 self-end"
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs ml-2 flex-shrink-0 self-end"
                 style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)' }}>
                 🧑
               </div>
@@ -540,9 +573,9 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
         {/* Interim transcript preview */}
         {interimTranscript && (
           <div className="flex justify-end">
-            <div className="max-w-xs rounded-2xl px-4 py-3 opacity-60"
+            <div className="max-w-xs rounded-xl px-3.5 py-2.5 opacity-60"
               style={{ background: 'rgba(37,99,235,0.3)', border: '1px dashed rgba(99,179,237,0.4)' }}>
-              <p className="text-white text-sm italic">{interimTranscript}…</p>
+              <p className="text-white text-xs italic">{interimTranscript}…</p>
             </div>
           </div>
         )}
@@ -550,12 +583,12 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
         {/* Thinking indicator */}
         {aiStatus === 'thinking' && (
           <div className="flex justify-start">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm mr-2"
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-2"
               style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>🤖</div>
-            <div className="rounded-2xl px-5 py-3" style={{ background: 'rgba(255,255,255,0.08)' }}>
-              <div className="flex gap-1.5 items-center h-5">
+            <div className="rounded-xl px-4 py-2.5" style={{ background: 'rgba(255,255,255,0.08)' }}>
+              <div className="flex gap-1 items-center h-4">
                 {[0, 1, 2].map((i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-blue-400"
+                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-blue-400"
                     style={{ animation: `bounce 1.2s ${i * 0.2}s infinite` }} />
                 ))}
               </div>
@@ -565,7 +598,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
         {/* Error message */}
         {errorMsg && (
-          <div className="mx-auto max-w-sm rounded-2xl px-5 py-4 text-sm text-center"
+          <div className="mx-auto max-w-sm rounded-xl px-4 py-3 text-xs text-center"
             style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#fca5a5' }}>
             {errorMsg}
           </div>
@@ -575,11 +608,11 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
       </div>
 
       {/* ── Bottom mic area ──────────────────────────────────────────────── */}
-      <div className="px-6 py-5 flex-shrink-0 flex flex-col items-center gap-3"
+      <div className="px-4 py-4 flex-shrink-0 flex flex-col items-center gap-2"
         style={{ borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)' }}>
 
         {/* Instruction text */}
-        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
           {isMyTurn
             ? isListening
               ? 'Listening… speak in German. Tap mic to send.'
@@ -595,7 +628,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
         <button id="mic-btn"
           onClick={handleMicPress}
           disabled={!isMyTurn}
-          className="relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-200"
+          className="relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200"
           style={{
             background: isMyTurn && isListening
               ? 'linear-gradient(135deg, #ef4444, #dc2626)'
@@ -609,11 +642,11 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
             cursor: isMyTurn ? 'pointer' : 'not-allowed',
           }}
         >
-          <span className="text-3xl">{isMyTurn && isListening ? '⏹' : '🎙️'}</span>
+          <span className="text-2xl">{isMyTurn && isListening ? '⏹' : '🎙️'}</span>
         </button>
 
         {/* Stats strip */}
-        <div className="flex gap-6 text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <div className="flex gap-4 text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
           <span>💬 {messages.filter(m => m.role === 'user').length} messages</span>
           <span>🤝 {struggleCount} helped</span>
           <span>⭐ {Math.min(200, Math.round(elapsed / 10) * 5 + messages.filter(m => m.role === 'user').length * 3)} XP</span>
@@ -621,7 +654,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
         {/* Text input fallback */}
         {isMyTurn && (
-          <div className="flex w-full max-w-lg gap-2">
+          <div className="flex w-full max-w-lg gap-2 mt-1">
             <input
               id="text-input-fallback"
               type="text"
@@ -629,11 +662,11 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
               onChange={(e) => setTextInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleTextSend()}
               placeholder="Or type your answer here…"
-              className="flex-1 px-4 py-2 rounded-xl text-sm text-white"
+              className="flex-1 px-3 py-1.5 rounded-lg text-xs text-white"
               style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', outline: 'none' }}
             />
             <button onClick={handleTextSend} disabled={!textInput.trim()}
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-white"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
               style={{ background: textInput.trim() ? 'linear-gradient(135deg,#3b82f6,#2563eb)' : 'rgba(255,255,255,0.08)' }}>
               Send
             </button>

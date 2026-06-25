@@ -24,15 +24,18 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
     window.location.reload();
   };
 
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">⚙️ Settings</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="rounded-2xl shadow-2xl max-w-md w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto" style={{
+        background: '#1a1a2e',
+        border: '1px solid rgba(255,255,255,0.1)',
+        color: 'white',
+      }}>
+        <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+          <h2 className="text-xl font-bold">⚙️ Settings</h2>
           <button
             onClick={onClose}
-            className="text-2xl hover:scale-110 transition-transform"
+            className="text-xl hover:scale-110 transition-transform"
           >
             ✕
           </button>
@@ -40,57 +43,52 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
 
         {/* Player Name */}
         <div>
-          <label className="block text-sm font-semibold mb-2">Player Name</label>
+          <label className="block text-xs font-semibold mb-1 opacity-70">Player Name</label>
           <input
             type="text"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-black dark:text-white"
+            className="w-full px-3 py-1.5 border border-gray-600 rounded-lg bg-gray-900 text-white text-sm"
             placeholder="Enter your name"
           />
           <button
             onClick={handleSaveName}
-            className="button-primary w-full mt-2"
+            className="button-primary w-full mt-2 py-1.5 text-sm"
           >
             Save Name
           </button>
         </div>
 
         {/* Statistics */}
-        <div className="space-y-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-          <h3 className="font-bold text-lg">📊 Your Statistics</h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="p-3 bg-gray-900/60 rounded-lg border border-white/5">
+          <h3 className="font-bold text-sm mb-2">📊 Your Statistics</h3>
+          <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <p className="text-gray-600 dark:text-gray-400">Total XP</p>
-              <p className="font-bold">{userData.stats.totalXP}</p>
+              <p className="opacity-50">Total XP</p>
+              <p className="font-bold text-sm text-yellow-400">{userData.stats.totalXP}</p>
             </div>
             <div>
-              <p className="text-gray-600 dark:text-gray-400">Level</p>
-              <p className="font-bold">{userData.stats.level}</p>
+              <p className="opacity-50">Level</p>
+              <p className="font-bold text-sm text-purple-400">{userData.stats.level}</p>
             </div>
             <div>
-              <p className="text-gray-600 dark:text-gray-400">Words Learned</p>
-              <p className="font-bold">{userData.stats.wordsLearned}</p>
+              <p className="opacity-50">Words Learned</p>
+              <p className="font-bold text-sm text-blue-400">{userData.stats.wordsLearned}</p>
             </div>
             <div>
-              <p className="text-gray-600 dark:text-gray-400">Games Played</p>
-              <p className="font-bold">{userData.stats.gamesCompleted}</p>
+              <p className="opacity-50">Games Played</p>
+              <p className="font-bold text-sm text-green-400">{userData.stats.gamesCompleted}</p>
             </div>
           </div>
         </div>
 
         {/* AI Tutor Status */}
-        <div className="space-y-3 p-4 rounded-lg" style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.04))', border: '1px solid rgba(34,197,94,0.2)' }}>
-          <h3 className="font-bold text-lg">🎙️ AI Voice Tutor</h3>
-          <p className="text-xs" style={{ color: 'rgba(107,114,128,0.9)' }}>
-            The AI tutor is powered by <strong>Gemini 2.5 Flash</strong> and is built into this app.
-            No API key setup required — just open the Voice Tutor and start speaking!
+        <div className="p-3 rounded-lg border border-green-500/20 bg-green-500/5">
+          <h3 className="font-bold text-sm mb-1 text-green-400">🎙️ AI Voice Tutor</h3>
+          <p className="text-[11px] opacity-70 leading-relaxed">
+            The AI tutor is powered by <strong>Gemini 2.5 Flash</strong>. No API key setup required — just start speaking!
           </p>
-          <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: '#4ade80' }}>
-            <span>✅ Tutor is active and ready</span>
-          </div>
         </div>
-
 
         {/* Export Data */}
         <div>
@@ -104,7 +102,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
               link.download = 'german-vocab-progress.json';
               link.click();
             }}
-            className="button-secondary w-full"
+            className="button-secondary w-full py-1.5 text-xs"
           >
             📥 Export Progress
           </button>
@@ -115,25 +113,25 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
           {!showResetConfirm ? (
             <button
               onClick={() => setShowResetConfirm(true)}
-              className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition-colors"
+              className="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-bold rounded-lg transition-colors"
             >
               🔄 Reset All Data
             </button>
           ) : (
-            <div className="space-y-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg">
-              <p className="font-bold text-red-600 dark:text-red-400">
+            <div className="space-y-2 p-3 bg-red-950/20 border border-red-500/30 rounded-lg">
+              <p className="font-bold text-red-400 text-xs text-center">
                 Are you sure? This cannot be undone!
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={handleReset}
-                  className="flex-1 py-2 bg-red-600 text-white font-bold rounded hover:bg-red-700"
+                  className="flex-1 py-1.5 bg-red-600 text-white text-xs font-bold rounded hover:bg-red-700"
                 >
                   Yes, Reset
                 </button>
                 <button
                   onClick={() => setShowResetConfirm(false)}
-                  className="flex-1 py-2 bg-gray-400 text-white font-bold rounded hover:bg-gray-500"
+                  className="flex-1 py-1.5 bg-gray-700 text-white text-xs font-bold rounded hover:bg-gray-600"
                 >
                   Cancel
                 </button>
@@ -143,12 +141,12 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
         </div>
 
         {/* About */}
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-300 dark:border-blue-700">
-          <h3 className="font-bold mb-2">ℹ️ About</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            German A1 Vocabulary Learning Game
+        <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/10 text-center">
+          <h3 className="font-bold text-xs mb-1 text-blue-400">ℹ️ About</h3>
+          <p className="text-[11px] opacity-75">
+            German A1/A2 Vocabulary Learning Game
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-[10px] opacity-50 mt-1">
             Version 1.0 · Made for language learners
           </p>
         </div>

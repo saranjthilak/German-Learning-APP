@@ -9,38 +9,60 @@ const AchievementsPanel: React.FC<AchievementsPanelProps> = ({ userData }) => {
   const unlockedCount = userData.achievements.filter(a => a.unlocked).length;
 
   return (
-    <div className="game-card bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold mb-6">🏆 All Achievements</h2>
-      <p className="text-lg font-semibold text-primary mb-6">
-        {unlockedCount} / {userData.achievements.length} Unlocked
-      </p>
+    <div className="game-card" style={{
+      background: '#1a1a2e',
+      border: '1px solid rgba(255,255,255,0.07)',
+      padding: 16,
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 style={{ fontWeight: 900, fontSize: 16, color: 'white' }}>🏆 All Achievements</h3>
+        <span style={{ fontSize: 12, opacity: 0.6, fontWeight: 700 }}>
+          {unlockedCount} / {userData.achievements.length} Unlocked
+        </span>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* List */}
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: 8, 
+        maxHeight: 420, 
+        overflowY: 'auto', 
+        paddingRight: 4 
+      }}>
         {userData.achievements.map((achievement) => (
           <div
             key={achievement.id}
-            className={`p-4 rounded-lg border-2 transition-all duration-300 ${
-              achievement.unlocked
-                ? 'border-primary bg-green-50 dark:bg-green-900/20'
-                : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/20 opacity-60'
-            }`}
+            style={{
+              padding: '8px 12px',
+              borderRadius: 12,
+              border: achievement.unlocked ? '1.5px solid rgba(34, 197, 94, 0.4)' : '1px solid rgba(255,255,255,0.06)',
+              background: achievement.unlocked ? 'rgba(34, 197, 94, 0.08)' : 'rgba(255,255,255,0.03)',
+              opacity: achievement.unlocked ? 1 : 0.6,
+              transition: 'transform 0.15s',
+            }}
+            className="achievement-item-row"
           >
-            <div className="flex items-start gap-3">
-              <div className="text-4xl">{achievement.icon}</div>
-              <div className="flex-1">
-                <h3 className="font-bold text-lg">{achievement.name}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ fontSize: 24, flexShrink: 0 }}>{achievement.icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h4 style={{ fontWeight: 800, fontSize: 13, color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {achievement.name}
+                  </h4>
+                  {achievement.unlocked && (
+                    <span style={{ fontSize: 10, color: '#4ade80', fontWeight: 800 }}>✓ UNLOCKED</span>
+                  )}
+                </div>
+                <p style={{ fontSize: 11, opacity: 0.6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '2px 0 0 0' }}>
                   {achievement.description}
                 </p>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-semibold">
-                    Progress: {achievement.currentProgress} / {achievement.requirement}
-                  </span>
-                  {achievement.unlocked && (
-                    <span className="text-xs text-green-600 dark:text-green-400 font-bold">
-                      ✓ UNLOCKED
-                    </span>
-                  )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, opacity: 0.5, marginTop: 2 }}>
+                  <span>Progress: {achievement.currentProgress} / {achievement.requirement}</span>
                 </div>
               </div>
             </div>
