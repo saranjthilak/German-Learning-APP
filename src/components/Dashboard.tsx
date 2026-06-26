@@ -74,6 +74,20 @@ const CircleRing: React.FC<{ pct: number; size?: number; stroke?: number; color?
 const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartTutor, onSelectGame }) => {
   const [showFlashcardMode, setShowFlashcardMode] = useState(false);
   const [mascotWiggle, setMascotWiggle] = useState(false);
+  
+  // Choose a random game for Today's Challenge on mount
+  const [challengeGame] = useState(() => {
+    const list = [
+      { id: 'quiz', name: 'Quiz Game', label: 'Complete a Quiz round', target: 'game-quiz' },
+      { id: 'matching', name: 'Matching Game', label: 'Complete a Matching round', target: 'game-matching' },
+      { id: 'memory', name: 'Memory Game', label: 'Complete a Memory matching round', target: 'game-memory' },
+      { id: 'typing', name: 'Typing Game', label: 'Complete a translation Typing round', target: 'game-typing' },
+      { id: 'pronunciation', name: 'Pronunciation Game', label: 'Complete a Pronunciation round', target: 'game-pronunciation' },
+    ];
+    const randomIndex = Math.floor(Math.random() * list.length);
+    return list[randomIndex];
+  });
+
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
@@ -96,9 +110,16 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
   const gameXP = (userData.gameSessions || [])
     .filter(session => session.timestamp && new Date(session.timestamp).toDateString() === todayStr)
     .reduce((sum, session) => sum + (session.xpEarned || 0), 0);
-  const challengeXP = (userData.dailyChallenges || [])
-    .filter(c => c.date === todayStr && c.completed)
-    .length * 50;
+  
+  // Check if today's selected challenge game is completed with >= 80% accuracy
+  const isChallengeCompleted = (userData.gameSessions || []).some(session => {
+    return session.gameType === challengeGame.id && 
+           session.timestamp && 
+           new Date(session.timestamp).toDateString() === todayStr &&
+           session.accuracy >= 80;
+  });
+
+  const challengeXP = isChallengeCompleted ? 50 : 0;
   const todayXP = gameXP + challengeXP;
 
   const DAILY_GOAL_XP = 100;
@@ -305,26 +326,29 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
               fontSize: 9, fontWeight: 800, padding: '1px 5px', borderRadius: 999,
               background: 'rgba(250,204,21,0.2)', color: 'var(--color-xp)', border: '1px solid rgba(250,204,21,0.35)',
             }}>+50 XP</span>
+            {isChallengeCompleted && <span style={{ fontSize: 11, color: '#22c55e', marginLeft: 'auto', fontWeight: 'bold' }}>✓ Done</span>}
           </div>
           <p style={{ fontSize: 13, fontWeight: 800, marginBottom: 2 }}>
-            🎯 Complete 3 Quiz rounds
+            🎯 {challengeGame.label}
           </p>
           <p style={{ fontSize: 11, opacity: 0.55, marginBottom: 8 }}>
             80%+ accuracy required
           </p>
           <button
-            onClick={() => { window.location.hash = 'game-quiz'; }}
+            onClick={() => { window.location.hash = challengeGame.target; }}
+            disabled={isChallengeCompleted}
             style={{
               width: '100%', padding: '6px 0',
-              background: 'linear-gradient(135deg, #ca8a04, #facc15)',
-              color: '#1a0a00', fontWeight: 900, fontSize: 11,
-              border: 'none', borderRadius: 8, cursor: 'pointer',
+              background: isChallengeCompleted ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #ca8a04, #facc15)',
+              color: isChallengeCompleted ? 'rgba(255,255,255,0.3)' : '#1a0a00',
+              fontWeight: 900, fontSize: 11,
+              border: 'none', borderRadius: 8, cursor: isChallengeCompleted ? 'not-allowed' : 'pointer',
               transition: 'transform 0.15s, box-shadow 0.15s',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+            onMouseEnter={e => { if (!isChallengeCompleted) (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { if (!isChallengeCompleted) (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
           >
-            Start Quiz →
+            {isChallengeCompleted ? 'Completed! 🎉' : `Start ${challengeGame.name} →`}
           </button>
         </div>
       </div>
