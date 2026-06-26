@@ -19,6 +19,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   const [similarity, setSimilarity] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'correct' | 'close' | 'incorrect'; message: string } | null>(null);
   const [gameTime, setGameTime] = useState(0);
+  const [attempts, setAttempts] = useState(0);
 
   useEffect(() => {
     if (!gameStarted) return;
@@ -47,22 +48,15 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
         const sim = SpeechManager.calculateSimilarity(result, currentWord.german);
         setSimilarity(sim);
 
+        setIsListening(false);
+
         if (sim >= 80) {
           setCorrectAnswers(prev => prev + 1);
           StorageManager.markWordLearned(currentWord.id);
           StorageManager.addWeakWord(currentWord.id, true);
           setFeedback({ type: 'correct', message: '✓ Excellent pronunciation!' });
-        } else if (sim >= 60) {
-          StorageManager.addWeakWord(currentWord.id, false);
-          setFeedback({ type: 'close', message: '~ Close! Try again' });
-        } else {
-          StorageManager.addWeakWord(currentWord.id, false);
-          setFeedback({ type: 'incorrect', message: '✗ Not quite right' });
-        }
+          setAttempts(0);
 
-        setIsListening(false);
-
-        if (sim >= 80) {
           setTimeout(() => {
             if (currentIndex + 1 < wordsCount) {
               setCurrentIndex(prev => prev + 1);
@@ -73,6 +67,32 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
               completeGame();
             }
           }, 2000);
+        } else {
+          StorageManager.addWeakWord(currentWord.id, false);
+          setAttempts(prev => {
+            const nextAttempts = prev + 1;
+            if (nextAttempts >= 4) {
+              setFeedback({ type: 'incorrect', message: '✗ 4 attempts failed! Moving to next word.' });
+              setTimeout(() => {
+                setAttempts(0);
+                if (currentIndex + 1 < wordsCount) {
+                  setCurrentIndex(idx => idx + 1);
+                  setTranscript('');
+                  setSimilarity(null);
+                  setFeedback(null);
+                } else {
+                  completeGame();
+                }
+              }, 2000);
+            } else {
+              if (sim >= 60) {
+                setFeedback({ type: 'close', message: `~ Close! Try again (Attempt ${nextAttempts}/4)` });
+              } else {
+                setFeedback({ type: 'incorrect', message: `✗ Not quite right (Attempt ${nextAttempts}/4)` });
+              }
+            }
+            return nextAttempts;
+          });
         }
       },
       (error) => {
@@ -83,6 +103,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   };
 
   const handleSkip = () => {
+    setAttempts(0);
     if (currentIndex + 1 < wordsCount) {
       setCurrentIndex(prev => prev + 1);
       setTranscript('');
@@ -232,6 +253,12 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
         >
           {isListening ? '🎤 Recording...' : '🎤 Click to Speak'}
         </button>
+
+        {attempts > 0 && (
+          <div className="text-center text-sm font-bold text-orange-500">
+            ⚠️ Attempt {attempts} / 4
+          </div>
+        )}
 
         {transcript && (
           <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
