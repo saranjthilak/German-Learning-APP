@@ -423,18 +423,18 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
               {/* Topic selector */}
               <div className="rounded-2xl p-4 glass-card border border-white/5" style={{ background: 'rgba(255,255,255,0.03)' }}>
                 <h3 className="text-white font-black mb-2.5 text-xs tracking-wider uppercase opacity-80">Choose a Topic</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 max-h-[160px] overflow-y-auto pr-1">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 max-h-[280px] overflow-y-auto pr-1">
                   {TOPICS.map((t) => (
                     <button key={t.id} id={`topic-${t.id}`}
                       onClick={() => setTopic(t.id)}
-                      className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl text-[10px] font-bold transition-all duration-150 tactile-btn"
+                      className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl text-[10px] font-bold transition-all duration-150 tactile-btn"
                       style={{
                         background: topic === t.id ? `${t.color}33` : 'rgba(255,255,255,0.03)',
                         border: topic === t.id ? `2px solid ${t.color}` : '2px solid transparent',
                         color: topic === t.id ? 'white' : 'rgba(255,255,255,0.5)',
                       }}
                     >
-                      <span className="text-lg">{t.icon}</span>
+                      <span className="text-xl">{t.icon}</span>
                       <span className="truncate w-full text-center">{t.label}</span>
                     </button>
                   ))}
@@ -564,51 +564,53 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
       }}>
 
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 py-2 flex-shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <div className="flex items-center gap-2">
-          <span className="text-lg">{currentTopic.icon}</span>
-          <div>
-            <p className="text-white font-black text-[11px]">{currentTopic.label}</p>
-            <p className="text-[9px]" style={{ color: 'rgba(255,255,255,0.4)' }}>Level {level} · {formatDuration(elapsed)}</p>
+      <div className="flex-shrink-0 border-b border-white/10">
+        <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto w-full">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">{currentTopic.icon}</span>
+            <div>
+              <p className="text-white font-black text-xs">{currentTopic.label}</p>
+              <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.4)' }}>Level {level} · {formatDuration(elapsed)}</p>
+            </div>
           </div>
-        </div>
 
-        <button id="end-session-btn" onClick={endSession}
-          className="px-3 py-1 rounded-lg text-[10px] font-bold tactile-btn"
-          style={{ background: 'rgba(239,68,68,0.15)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.25)' }}>
-          End Session
-        </button>
+          <button id="end-session-btn" onClick={endSession}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold tactile-btn"
+            style={{ background: 'rgba(239,68,68,0.15)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.25)' }}>
+            End Session
+          </button>
+        </div>
       </div>
 
       {/* ── Tutor Avatar Status Strip (New Redesigned Element) ──────────── */}
-      <div className="flex-shrink-0 py-2 border-b border-white/5 bg-white/[0.02] flex justify-center items-center">
+      <div className="flex-shrink-0 py-3 border-b border-white/5 bg-white/[0.02] flex justify-center items-center">
         <TutorAvatar status={aiStatus} />
       </div>
 
       {/* ── Chat area ───────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5">
-        {messages.map((msg) => {
-          const parts = getMessageParts(msg.content);
-          const hasHint = parts.english.length > 0;
-          const isRevealed = revealedHints[msg.id];
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="max-w-2xl mx-auto w-full space-y-4">
+          {messages.map((msg) => {
+            const parts = getMessageParts(msg.content);
+            const hasHint = parts.english.length > 0;
+            const isRevealed = revealedHints[msg.id];
 
-          return (
-            <div key={msg.id}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              {msg.role === 'assistant' && (
-                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] mr-1.5 flex-shrink-0 self-end"
-                  style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)' }}>
-                  🦉
-                </div>
-              )}
-              <div className="max-w-[80%] sm:max-w-md lg:max-w-lg rounded-2xl px-3 py-2 text-xs"
-                style={{
-                  background: msg.role === 'user'
-                    ? 'linear-gradient(135deg, #2563eb, #7c3aed)'
-                    : 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                }}>
+            return (
+              <div key={msg.id}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {msg.role === 'assistant' && (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs mr-2 flex-shrink-0 self-end"
+                    style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)' }}>
+                    🦉
+                  </div>
+                )}
+                <div className="max-w-[80%] sm:max-w-md lg:max-w-lg rounded-2xl px-4 py-2.5 text-sm"
+                  style={{
+                    background: msg.role === 'user'
+                      ? 'linear-gradient(135deg, #2563eb, #7c3aed)'
+                      : 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                  }}>
                 
                 {/* Assistant Message Rendering */}
                 {msg.role === 'assistant' ? (
@@ -618,16 +620,16 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
                     
                     {/* English Hint Segment (revealed only when requested) */}
                     {hasHint && (
-                      <div className="mt-1.5 pt-1.5 border-t border-white/10">
+                      <div className="mt-2 pt-2 border-t border-white/10">
                         {isRevealed ? (
                           <div className="animate-slide-up">
-                            <span className="text-[9px] font-bold text-yellow-400 block mb-0.5">💡 Hint translation:</span>
-                            <p className="text-[11px] text-yellow-200/90 leading-relaxed italic">{parts.english}</p>
+                            <span className="text-[10px] font-bold text-yellow-400 block mb-0.5">💡 Hint translation:</span>
+                            <p className="text-xs text-yellow-200/90 leading-relaxed italic">{parts.english}</p>
                           </div>
                         ) : null}
                         <button
                           onClick={() => toggleHint(msg.id)}
-                          className="mt-1 text-[10px] font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1"
+                          className="mt-1 text-[11px] font-bold text-yellow-400 hover:text-yellow-300 transition-colors flex items-center gap-1"
                         >
                           {isRevealed ? '🙈 Hide English Hint' : '💡 Show English Hint'}
                         </button>
@@ -636,15 +638,15 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
                   </div>
                 ) : (
                   /* User Message Rendering */
-                  <p className="text-white text-xs leading-relaxed">{msg.content}</p>
+                  <p className="text-white text-sm leading-relaxed">{msg.content}</p>
                 )}
 
                 {msg.hadStruggle && (
-                  <p className="text-[8px] mt-0.5 opacity-40">🤝 needed help</p>
+                  <p className="text-[9px] mt-0.5 opacity-40">🤝 needed help</p>
                 )}
               </div>
               {msg.role === 'user' && (
-                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ml-1.5 flex-shrink-0 self-end"
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs ml-2 flex-shrink-0 self-end"
                   style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)' }}>
                   🧑
                 </div>
@@ -656,9 +658,9 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
         {/* Interim transcript preview */}
         {interimTranscript && (
           <div className="flex justify-end">
-            <div className="max-w-[80%] rounded-2xl px-3 py-2 opacity-60"
+            <div className="max-w-[80%] rounded-2xl px-4 py-2.5 opacity-60"
               style={{ background: 'rgba(37,99,235,0.3)', border: '1px dashed rgba(99,179,237,0.4)' }}>
-              <p className="text-white text-xs italic">{interimTranscript}…</p>
+              <p className="text-white text-sm italic">{interimTranscript}…</p>
             </div>
           </div>
         )}
@@ -671,74 +673,76 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
           </div>
         )}
 
+        </div>
         <div ref={chatBottomRef} />
       </div>
 
       {/* ── Bottom mic area ──────────────────────────────────────────────── */}
-      <div className="px-4 py-2.5 flex-shrink-0 flex flex-col items-center gap-1.5"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.2)' }}>
+      <div className="flex-shrink-0 border-t border-white/10 bg-black/10">
+        <div className="px-4 py-4 flex flex-col items-center gap-2 max-w-2xl mx-auto w-full">
 
-        {/* Instruction text */}
-        <p className="text-[9px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
-          {isMyTurn
-            ? isListening
-              ? 'Listening… speak German. Tap mic to send.'
-              : 'Microphone activating…'
-            : aiStatus === 'speaking'
-              ? 'Lena is speaking…'
-              : aiStatus === 'thinking'
-                ? 'Lena is thinking…'
-                : 'Waiting…'}
-        </p>
+          {/* Instruction text */}
+          <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            {isMyTurn
+              ? isListening
+                ? 'Listening… speak German. Tap mic to send.'
+                : 'Microphone activating…'
+              : aiStatus === 'speaking'
+                ? 'Lena is speaking…'
+                : aiStatus === 'thinking'
+                  ? 'Lena is thinking…'
+                  : 'Waiting…'}
+          </p>
 
-        {/* Mic button */}
-        <button id="mic-btn"
-          onClick={handleMicPress}
-          disabled={!isMyTurn}
-          className="relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 tactile-btn"
-          style={{
-            background: isMyTurn && isListening
-              ? 'linear-gradient(135deg, #ef4444, #dc2626)'
-              : isMyTurn
-                ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
-                : 'rgba(255,255,255,0.08)',
-            boxShadow: isMyTurn && isListening
-              ? '0 0 0 0 rgba(239, 68, 68, 0.4)'
-              : 'none',
-            animation: isMyTurn && isListening ? 'mic-pulse 1.5s infinite' : 'none',
-            cursor: isMyTurn ? 'pointer' : 'not-allowed',
-          }}
-        >
-          <span className="text-xl">{isMyTurn && isListening ? '⏹' : '🎙️'}</span>
-        </button>
+          {/* Mic button */}
+          <button id="mic-btn"
+            onClick={handleMicPress}
+            disabled={!isMyTurn}
+            className="relative w-15 h-15 rounded-full flex items-center justify-center transition-all duration-200 tactile-btn"
+            style={{
+              background: isMyTurn && isListening
+                ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+                : isMyTurn
+                  ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                  : 'rgba(255,255,255,0.08)',
+              boxShadow: isMyTurn && isListening
+                ? '0 0 0 0 rgba(239, 68, 68, 0.4)'
+                : 'none',
+              animation: isMyTurn && isListening ? 'mic-pulse 1.5s infinite' : 'none',
+              cursor: isMyTurn ? 'pointer' : 'not-allowed',
+            }}
+          >
+            <span className="text-2xl">{isMyTurn && isListening ? '⏹' : '🎙️'}</span>
+          </button>
 
-        {/* Stats strip */}
-        <div className="flex gap-4 text-[9px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
-          <span>💬 {messages.filter(m => m.role === 'user').length} messages</span>
-          <span>🤝 {struggleCount} helped</span>
-          <span>⭐ {Math.min(200, Math.round(elapsed / 10) * 5 + messages.filter(m => m.role === 'user').length * 3)} XP</span>
-        </div>
-
-        {/* Text input fallback */}
-        {isMyTurn && (
-          <div className="flex w-full max-w-lg gap-2 mt-0.5">
-            <input
-              id="text-input-fallback"
-              type="text"
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleTextSend()}
-              placeholder="Or type here..."
-              className="flex-1 px-3 py-1.5 rounded-lg text-xs text-white"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', outline: 'none' }}
-            />
-            <button onClick={handleTextSend} disabled={!textInput.trim()}
-              className="px-3 py-1 rounded-lg text-xs font-bold text-white tactile-btn"
-              style={{ background: textInput.trim() ? 'linear-gradient(135deg,#3b82f6,#2563eb)' : 'rgba(255,255,255,0.05)' }}>
-              Send
-            </button>
+          {/* Stats strip */}
+          <div className="flex gap-4 text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span>💬 {messages.filter(m => m.role === 'user').length} messages</span>
+            <span>🤝 {struggleCount} helped</span>
+            <span>⭐ {Math.min(200, Math.round(elapsed / 10) * 5 + messages.filter(m => m.role === 'user').length * 3)} XP</span>
           </div>
-        )}
+
+          {/* Text input fallback */}
+          {isMyTurn && (
+            <div className="flex w-full max-w-lg gap-2 mt-1">
+              <input
+                id="text-input-fallback"
+                type="text"
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleTextSend()}
+                placeholder="Or type here..."
+                className="flex-1 px-3.5 py-2 rounded-xl text-xs text-white"
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', outline: 'none' }}
+              />
+              <button onClick={handleTextSend} disabled={!textInput.trim()}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white tactile-btn"
+                style={{ background: textInput.trim() ? 'linear-gradient(135deg,#3b82f6,#2563eb)' : 'rgba(255,255,255,0.05)' }}>
+                Send
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Inline styles for animations ─────────────────────────────────── */}
