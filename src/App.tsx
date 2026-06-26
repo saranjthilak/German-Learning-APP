@@ -352,7 +352,10 @@ const AppInner: React.FC = () => {
             </div>
 
             <button
-              onClick={() => setSuccessData(null)}
+              onClick={() => {
+                setSuccessData(null);
+                window.location.hash = '';
+              }}
               className="w-full py-3 rounded-xl font-black text-white text-xs tactile-btn"
               style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)' }}
             >
