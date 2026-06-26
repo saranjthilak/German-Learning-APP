@@ -98,6 +98,9 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
       (error) => {
         setFeedback({ type: 'incorrect', message: `Error: ${error}` });
         setIsListening(false);
+      },
+      () => {
+        setIsListening(false);
       }
     );
   };

@@ -23,13 +23,15 @@ export const SpeechManager = {
   // Start listening for speech input
   listen: (
     onResult: (transcript: string) => void,
-    onError: (error: string) => void
+    onError: (error: string) => void,
+    onEnd: () => void
   ): void => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
       onError('Speech recognition not supported in your browser');
+      onEnd();
       return;
     }
 
@@ -55,12 +57,14 @@ export const SpeechManager = {
 
     recognition.onend = () => {
       console.log('Listening ended');
+      onEnd();
     };
 
     try {
       recognition.start();
     } catch (error) {
       console.log('Error starting recognition:', error);
+      onEnd();
     }
   },
 
