@@ -13,6 +13,7 @@ import AuthModal from './components/AuthModal';
 import VoiceTutor from './components/VoiceTutor';
 import Confetti from './components/Confetti';
 import GameMenu from './components/GameMenu';
+import ThemeToggle from './components/ThemeToggle';
 import './index.css';
 
 type GameType = 'matching' | 'memory' | 'quiz' | 'typing' | 'pronunciation' | 'voice-tutor' | null;
@@ -21,7 +22,7 @@ type Tab = 'home' | 'games' | 'tutor' | 'profile';
 // ─── Inner app ────────────────────────────────────────────────────────────────
 
 const AppInner: React.FC = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [userData, setUserData]         = useState<UserData>(StorageManager.getUserData());
   const [currentGame, setCurrentGame]   = useState<GameType>(null);
@@ -30,9 +31,22 @@ const AppInner: React.FC = () => {
   const [syncing, setSyncing]           = useState(false);
   const [activeTab, setActiveTab]       = useState<Tab>('home');
   const [showConfetti, setShowConfetti] = useState(false);
+  const [successData, setSuccessData]   = useState<{
+    xp: number;
+    coins: number;
+    accuracy: number;
+    correct: number;
+    total: number;
+  } | null>(null);
 
-  // Force dark mode always
-  useEffect(() => { document.documentElement.classList.add('dark'); }, []);
+  // Apply dark mode state
+  useEffect(() => {
+    if (userData.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [userData.darkMode]);
 
   // Streak check
   useEffect(() => { StorageManager.checkStreakResetNeeded(); }, []);
@@ -75,8 +89,16 @@ const AppInner: React.FC = () => {
     const updated = StorageManager.updateStats(xpEarned, accuracy, correctAnswers, totalAnswers, currentGame || '');
     setUserData(updated);
     if (user) saveCloudData(user.uid, updated);
+    
+    const coinsReward = 15 + (accuracy === 100 ? 10 : 0);
+    setSuccessData({
+      xp: xpEarned,
+      coins: coinsReward,
+      accuracy,
+      correct: correctAnswers,
+      total: totalAnswers,
+    });
     setShowConfetti(true);
-    window.location.hash = '';
   }, [currentGame, user]);
 
   const handleSaveUserData = useCallback((updated: UserData) => {
@@ -128,192 +150,217 @@ const AppInner: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#111827', color: 'white', fontFamily: "'Nunito', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: 'var(--color-bg)', color: 'var(--color-text-main)', fontFamily: "'Nunito', sans-serif" }}>
 
       {/* Confetti overlay */}
       {showConfetti && <Confetti onDone={() => setShowConfetti(false)} />}
 
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header style={{
-        background: 'rgba(17,24,39,0.95)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-        position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 16px',
-      }}>
-        <div style={{
-          maxWidth: 960, margin: '0 auto',
-          height: 60,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
+      {/* ── Desktop Sidebar ──────────────────────────────────────────────── */}
+      {!currentGame && (
+        <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 p-6 z-40 border-r border-slate-200 dark:border-slate-800"
+          style={{ background: 'var(--color-surface)', height: '100vh' }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginBottom: 32 }}
             onClick={() => { window.location.hash = ''; setActiveTab('home'); }}>
-            <span style={{ fontSize: 26 }}>🇩🇪</span>
-            <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.3px' }}>Deutsch</span>
+            <span style={{ fontSize: 32 }}>🇩🇪</span>
+            <span style={{ fontWeight: 900, fontSize: 22, letterSpacing: '-0.3px' }}>Deutsch</span>
           </div>
 
-          {/* Center stats strip */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ fontSize: 16 }}>🔥</span>
-              <span style={{ fontWeight: 900, fontSize: 15, color: '#fb923c' }}>{userData.stats.currentStreak}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ fontSize: 16 }}>⚡</span>
-              <span style={{ fontWeight: 900, fontSize: 15, color: '#fbbf24' }}>{userData.stats.totalXP}</span>
-            </div>
-            <div style={{
-              background: 'rgba(168,85,247,0.2)',
-              border: '1px solid rgba(168,85,247,0.35)',
-              borderRadius: 999, padding: '4px 10px',
-              fontSize: 12, fontWeight: 800, color: '#c084fc',
-            }}>
-              Lv.{userData.stats.level}
-            </div>
-          </div>
-
-          {/* Right actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {syncing && (
-              <span style={{ fontSize: 11, color: '#60a5fa', fontWeight: 700 }}>⟳ Syncing…</span>
-            )}
-            <button
-              id="settings-btn"
-              onClick={() => { window.location.hash = showSettings ? '' : 'settings'; }}
-              style={{
-                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 10, width: 36, height: 36, cursor: 'pointer', fontSize: 16,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background 0.15s',
-              }}
-              title="Settings"
-            >⚙️</button>
-
-            {authLoading ? null : user ? (
-              <div style={{ position: 'relative' }} className="group">
+          {/* Navigation Links */}
+          <div className="flex-1 flex flex-col gap-2">
+            {([
+              { id: 'home',    icon: '🏠', label: 'Home'    },
+              { id: 'games',   icon: '🎮', label: 'Games'   },
+              { id: 'tutor',   icon: '🎙️', label: 'Tutor'   },
+              { id: 'profile', icon: '👤', label: 'Profile' },
+            ] as { id: Tab; icon: string; label: string }[]).map(tab => {
+              const active = activeTab === tab.id;
+              return (
                 <button
-                  id="user-avatar-btn"
-                  style={{
-                    width: 36, height: 36, borderRadius: '50%', overflow: 'hidden',
-                    background: 'linear-gradient(135deg,#63b3ed,#7c3aed)',
-                    border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontWeight: 800, fontSize: 13, color: 'white',
-                    transition: 'transform 0.15s',
-                  }}
-                  title={user.displayName ?? user.email ?? 'Account'}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                  key={tab.id}
+                  onClick={() => goTab(tab.id)}
+                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl font-extrabold text-sm transition-all duration-200 text-left ${
+                    active 
+                      ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-2 border-purple-500/20' 
+                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border-2 border-transparent'
+                  }`}
                 >
-                  {user.photoURL
-                    ? <img src={user.photoURL} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                    : getInitials(user.displayName ?? user.email)
-                  }
+                  <span style={{ fontSize: 20 }}>{tab.icon}</span>
+                  {tab.label}
                 </button>
-                <div className="absolute right-0 top-11 hidden group-hover:flex flex-col min-w-max rounded-xl shadow-xl overflow-hidden z-50"
-                  style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', top: 42, right: 0 }}>
-                  <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                    <p style={{ fontWeight: 800, fontSize: 14 }}>{user.displayName ?? 'User'}</p>
-                    <p style={{ fontSize: 11, opacity: 0.4 }}>{user.email}</p>
-                  </div>
-                  <button
-                    id="sign-out-btn"
-                    onClick={signOut}
-                    style={{
-                      padding: '10px 16px', textAlign: 'left', fontSize: 13,
-                      color: '#f87171', background: 'transparent', border: 'none', cursor: 'pointer',
-                      fontFamily: "'Nunito', sans-serif", fontWeight: 700,
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.1)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-                  >
-                    Sign out
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                id="login-btn"
-                onClick={() => setShowAuthModal(true)}
-                style={{
-                  padding: '8px 16px', borderRadius: 12,
-                  background: 'linear-gradient(135deg,#63b3ed,#7c3aed)',
-                  color: 'white', fontWeight: 800, fontSize: 13,
-                  border: 'none', cursor: 'pointer',
-                  transition: 'transform 0.15s, box-shadow 0.15s',
-                  fontFamily: "'Nunito', sans-serif",
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(99,179,237,0.4)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; (e.currentTarget as HTMLButtonElement).style.boxShadow = ''; }}
-              >
-                Sign In
-              </button>
-            )}
-
-            {currentGame && (
-              <button
-                id="back-btn"
-                onClick={() => { window.location.hash = ''; }}
-                className="button-secondary"
-                style={{ padding: '7px 14px', fontSize: 13, borderRadius: 10 }}
-              >
-                ← Back
-              </button>
-            )}
+              );
+            })}
           </div>
-        </div>
-      </header>
 
-      {/* ── Main content ─────────────────────────────────────────────────── */}
-      <main style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px 100px' }}>
-        {renderContent()}
-      </main>
-
-      {/* ── Bottom Navigation Bar (mobile-friendly) ──────────────────────── */}
-      {!currentGame && !showSettings && (
-        <nav style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0,
-          background: 'rgba(17,24,39,0.97)',
-          backdropFilter: 'blur(16px)',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex', justifyContent: 'space-around',
-          padding: '10px 0 16px',
-          zIndex: 100,
-        }}>
-          {([
-            { id: 'home',    icon: '🏠', label: 'Home'    },
-            { id: 'games',   icon: '🎮', label: 'Games'   },
-            { id: 'tutor',   icon: '🎙️', label: 'Tutor'   },
-            { id: 'profile', icon: '👤', label: 'Profile' },
-          ] as { id: Tab; icon: string; label: string }[]).map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => goTab(tab.id)}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                padding: '4px 20px',
-                color: activeTab === tab.id ? '#818cf8' : 'rgba(255,255,255,0.35)',
-                transition: 'color 0.15s',
-                fontFamily: "'Nunito', sans-serif",
-              }}
-            >
-              <span style={{ fontSize: 22 }}>{tab.icon}</span>
-              <span style={{ fontSize: 11, fontWeight: 800 }}>{tab.label}</span>
-              {activeTab === tab.id && (
-                <div style={{
-                  position: 'absolute', bottom: 6, width: 24, height: 3,
-                  background: '#818cf8', borderRadius: 999,
-                }} />
-              )}
-            </button>
-          ))}
-        </nav>
+          {/* User profile bottom bar */}
+          {user && (
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <div style={{
+                width: 38, height: 38, borderRadius: '50%', overflow: 'hidden',
+                background: 'linear-gradient(135deg,#63b3ed,#7c3aed)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 800, fontSize: 14, color: 'white', flexShrink: 0,
+              }}>
+                {user.photoURL
+                  ? <img src={user.photoURL} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : getInitials(user.displayName ?? user.email)
+                }
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-xs truncate">{user.displayName ?? 'Learner'}</p>
+                <p className="text-[10px] opacity-50 truncate">{user.email}</p>
+              </div>
+            </div>
+          )}
+        </aside>
       )}
+
+      {/* Main Content Layout Wrapper */}
+      <div className={`${!currentGame ? 'md:pl-64' : ''}`}>
+
+        {/* ── Header ──────────────────────────────────────────────────────── */}
+        <header style={{
+          background: 'var(--color-surface)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid var(--color-border)',
+          position: 'sticky', top: 0, zIndex: 30,
+          padding: '0 16px',
+        }}>
+          <div style={{
+            maxWidth: 960, margin: '0 auto',
+            height: 60,
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            {/* Logo */}
+            <div className="flex md:hidden items-center gap-10 cursor-pointer"
+              onClick={() => { window.location.hash = ''; setActiveTab('home'); }}>
+              <span style={{ fontSize: 26 }}>🇩🇪</span>
+              <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.3px' }}>Deutsch</span>
+            </div>
+
+            {/* Desktop Section Header */}
+            <div className="hidden md:block font-extrabold text-sm opacity-60">
+              {activeTab.toUpperCase()}
+            </div>
+
+            {/* Center stats strip */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ fontSize: 16 }}>🔥</span>
+                <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--color-streak)' }}>{userData.stats.currentStreak}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ fontSize: 16 }}>⚡</span>
+                <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--color-xp)' }}>{userData.stats.totalXP}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ fontSize: 16 }}>🪙</span>
+                <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--color-coin)' }}>{userData.stats.coins ?? 100}</span>
+              </div>
+              <div style={{
+                background: 'rgba(168,85,247,0.15)',
+                border: '1px solid rgba(168,85,247,0.3)',
+                borderRadius: 999, padding: '4px 10px',
+                fontSize: 12, fontWeight: 800, color: 'var(--color-purple)',
+              }}>
+                Lv.{userData.stats.level}
+              </div>
+            </div>
+
+            {/* Right actions */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {syncing && (
+                <span style={{ fontSize: 11, color: '#60a5fa', fontWeight: 700 }}>⟳ Syncing…</span>
+              )}
+              
+              <ThemeToggle 
+                darkMode={userData.darkMode} 
+                onToggle={() => {
+                  const updatedVal = StorageManager.toggleDarkMode();
+                  handleSaveUserData({ ...userData, darkMode: updatedVal });
+                }} 
+              />
+
+              <button
+                id="settings-btn"
+                onClick={() => { window.location.hash = showSettings ? '' : 'settings'; }}
+                style={{
+                  background: 'rgba(255,255,255,0.07)', border: '1px solid var(--color-border)',
+                  borderRadius: 10, width: 36, height: 36, cursor: 'pointer', fontSize: 16,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'background 0.15s',
+                }}
+                title="Settings"
+              >⚙️</button>
+
+              {currentGame && (
+                <button
+                  id="back-btn"
+                  onClick={() => { window.location.hash = ''; }}
+                  className="button-secondary"
+                  style={{ padding: '7px 14px', fontSize: 13, borderRadius: 10 }}
+                >
+                  ← Back
+                </button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* ── Main content ─────────────────────────────────────────────────── */}
+        <main style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px 100px' }}>
+          {renderContent()}
+        </main>
+      </div>
+
+
 
       {/* Auth modal */}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+      {/* Motivational Success Screen Modal */}
+      {successData && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 150,
+          background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 16
+        }}>
+          <div className="glass-card animate-scale-in max-w-sm w-full p-6 text-center border border-white/10"
+               style={{ background: 'var(--color-surface)', borderRadius: 24, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 50, marginBottom: 12 }}>🎉</div>
+            <h2 className="text-2xl font-black mb-2 text-white">Lektion Beendet!</h2>
+            <p className="text-xs text-purple-300 mb-6 font-bold">Awesome job! Keep up the great work.</p>
+            
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="rounded-xl p-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
+                <span className="text-2xl block mb-1">⚡</span>
+                <span className="text-lg font-black block">+{successData.xp}</span>
+                <span className="text-[10px] uppercase font-bold opacity-75">XP Earned</span>
+              </div>
+              <div className="rounded-xl p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                <span className="text-2xl block mb-1">🪙</span>
+                <span className="text-lg font-black block">+{successData.coins}</span>
+                <span className="text-[10px] uppercase font-bold opacity-75">Coins Won</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl mb-6">
+              <div className="text-[10px] uppercase font-black tracking-wider opacity-75 mb-1">Accuracy</div>
+              <div className="text-base font-black">{successData.accuracy}%</div>
+              <div className="text-[9px] opacity-70">({successData.correct} / {successData.total} correct)</div>
+            </div>
+
+            <button
+              onClick={() => setSuccessData(null)}
+              className="w-full py-3 rounded-xl font-black text-white text-xs tactile-btn"
+              style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)' }}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

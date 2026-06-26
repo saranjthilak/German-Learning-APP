@@ -8,6 +8,7 @@ export interface UserStats {
   bestStreak: number;
   currentStreak: number;
   totalScore: number;
+  coins?: number;
 }
 
 export interface AchievementData {

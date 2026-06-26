@@ -12,6 +12,7 @@ const DEFAULT_USER_DATA: UserData = {
     bestStreak: 0,
     currentStreak: 0,
     totalScore: 0,
+    coins: 100,
   },
   achievements: [],
   leaderboard: [],
@@ -43,6 +44,8 @@ export const StorageManager = {
       if (data) {
         const parsed = JSON.parse(data);
         if (!parsed.learnedWords) parsed.learnedWords = [];
+        if (!parsed.stats) parsed.stats = { ...DEFAULT_USER_DATA.stats };
+        if (parsed.stats.coins === undefined) parsed.stats.coins = 100;
         return parsed;
       }
       return DEFAULT_USER_DATA;
@@ -75,6 +78,8 @@ export const StorageManager = {
     stats.totalXP += xpEarned;
     stats.totalScore += correctAnswers * 10 - (totalAnswers - correctAnswers) * 2;
     stats.gamesCompleted += 1;
+    if (stats.coins === undefined) stats.coins = 100;
+    stats.coins += 15 + (accuracy === 100 ? 10 : 0);
 
     // Calculate new accuracy
     const totalAttempts = stats.gamesCompleted;
@@ -264,6 +269,8 @@ export const StorageManager = {
         userData.stats.bestStreak = userData.stats.currentStreak;
       }
       userData.stats.totalXP += 50;
+      if (userData.stats.coins === undefined) userData.stats.coins = 100;
+      userData.stats.coins += 30;
       userData.stats.level = Math.floor(userData.stats.totalXP / 100) + 1;
       StorageManager.saveUserData(userData);
       StorageManager.checkAchievements(userData);

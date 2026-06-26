@@ -6,22 +6,41 @@
 
 /* ── CSS Custom Properties ─────────────────────────────────────────────────── */
 :root {
-  --color-bg:        #111827;
-  --color-surface:   #1f2937;
-  --color-surface2:  #374151;
-  --color-border:    rgba(255,255,255,0.08);
-  --color-xp:        #facc15;
+  /* Light Mode Variables */
+  --color-bg:        #f8fafc;
+  --color-surface:   #ffffff;
+  --color-surface-hover: #f1f5f9;
+  --color-surface2:  #e2e8f0;
+  --color-border:    rgba(15, 23, 42, 0.08);
+  --color-text-main: #0f172a;
+  --color-text-sub:  #64748b;
+  
+  --color-xp:        #eab308;
   --color-streak:    #f97316;
+  --color-coin:      #fbbf24;
   --color-green:     #22c55e;
   --color-blue:      #3b82f6;
   --color-purple:    #a855f7;
   --color-pink:      #ec4899;
-  --radius-card:     20px;
-  --shadow-card:     0 4px 24px rgba(0,0,0,0.35);
-  --shadow-glow-green: 0 0 20px rgba(34,197,94,0.4);
-  --shadow-glow-orange: 0 0 20px rgba(249,115,22,0.4);
-  --shadow-glow-yellow: 0 0 20px rgba(250,204,21,0.4);
-  --shadow-glow-blue: 0 0 20px rgba(59,130,246,0.4);
+  --radius-card:     24px;
+  --shadow-card:     0 8px 30px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+  --shadow-glow-green: 0 0 20px rgba(34,197,94,0.2);
+  --shadow-glow-orange: 0 0 20px rgba(249,115,22,0.2);
+  --shadow-glow-yellow: 0 0 20px rgba(250,204,21,0.2);
+  --shadow-glow-blue: 0 0 20px rgba(59,130,246,0.2);
+}
+
+.dark {
+  /* Dark Mode Variables */
+  --color-bg:        #090d16;
+  --color-surface:   #121826;
+  --color-surface-hover: #1b2336;
+  --color-surface2:  #1f293d;
+  --color-border:    rgba(255, 255, 255, 0.06);
+  --color-text-main: #f8fafc;
+  --color-text-sub:  #94a3b8;
+  
+  --shadow-card:     0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
@@ -32,9 +51,10 @@ html { scroll-behavior: smooth; }
 body {
   font-family: 'Nunito', 'Segoe UI', sans-serif;
   background: var(--color-bg);
-  color: white;
+  color: var(--color-text-main);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ── Keyframes ─────────────────────────────────────────────────────────────── */
@@ -183,6 +203,19 @@ body {
   box-shadow: 0 4px 20px rgba(34,197,94,0.4);
 }
 .glow-btn-green:hover { box-shadow: 0 8px 30px rgba(34,197,94,0.55); }
+
+.tactile-btn {
+  border-bottom: 5px solid rgba(0,0,0,0.25) !important;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+.tactile-btn:hover {
+  transform: translateY(-4px) !important;
+  border-bottom-width: 7px !important;
+}
+.tactile-btn:active {
+  transform: translateY(2px) !important;
+  border-bottom-width: 1px !important;
+}
 
 .glow-btn-purple {
   background: linear-gradient(135deg, #a855f7, #7c3aed);

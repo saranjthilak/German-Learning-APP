@@ -153,29 +153,37 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   const progressPercent = ((currentQuestion + 1) / wordsCount) * 100;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-xl mx-auto p-4 animate-slide-up">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">❓ Quiz</h1>
-          <p className="text-gray-600 dark:text-gray-400">Question {currentQuestion + 1} of {wordsCount}</p>
+          <h1 className="text-2xl font-black">❓ Quiz</h1>
+          <p className="text-xs opacity-60">Question {currentQuestion + 1} of {wordsCount}</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-primary">{correctAnswers}/{currentQuestion}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{gameTime}s</p>
+          <p className="text-xl font-black text-purple-600 dark:text-purple-400">{correctAnswers}/{currentQuestion}</p>
+          <p className="text-xs opacity-60 font-bold">{gameTime}s</p>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+      <div className="progress-track">
+        <div className="progress-fill-animated" style={{ width: `${progressPercent}%`, background: 'var(--color-purple)' }}></div>
       </div>
 
       {/* Question Card */}
-      <div className="game-card bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-8 rounded-lg border-2 border-green-300 dark:border-green-700">
-        <h2 className="text-3xl font-bold text-center mb-2">{question.word.german}</h2>
-        <p className="text-center text-gray-600 dark:text-gray-400">What does this word mean?</p>
+      <div className="game-card p-6 border border-purple-500/10 shadow-lg text-center"
+        style={{ background: 'var(--color-surface)' }}>
+        <h2 className="text-3xl font-extrabold mb-1">{question.word.german}</h2>
+        <p className="text-xs opacity-50">Select the correct English translation</p>
       </div>
+
+      {/* Encouragement message */}
+      {showResult && (
+        <div className="text-center py-1 animate-float text-xs font-black text-purple-500">
+          {selectedAnswer === question.correct ? '🎉 Super! Correct Answer!' : '💪 Keep learning, you can do it!'}
+        </div>
+      )}
 
       {/* Answer Options */}
       <div className="space-y-3">
@@ -184,28 +192,37 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
           const isSelected = selectedAnswer === index;
           const showCorrect = showResult && isCorrect;
           const showIncorrect = showResult && isSelected && !isCorrect;
+          
+          const bgClass = showCorrect
+            ? 'bg-green-500 text-white shadow-lg shadow-green-500/25 border-green-600'
+            : showIncorrect
+            ? 'bg-red-500 text-white shadow-lg shadow-red-500/25 border-red-600'
+            : isSelected
+            ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25 border-purple-600'
+            : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700';
 
           return (
             <button
               key={index}
               onClick={() => handleAnswer(index)}
               disabled={showResult}
-              className={`w-full p-4 rounded-lg font-bold text-lg transition-all transform ${
-                showCorrect
-                  ? 'bg-green-200 dark:bg-green-900 border-2 border-green-500 scale-105'
-                  : showIncorrect
-                  ? 'bg-red-200 dark:bg-red-900 border-2 border-red-500 scale-105'
-                  : isSelected
-                  ? 'bg-blue-300 dark:bg-blue-700 border-2 border-blue-500 scale-105'
-                  : 'bg-gray-200 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 hover:scale-102'
-              } ${showResult && 'cursor-not-allowed'}`}
+              style={{
+                borderRadius: 20,
+                borderWidth: '1.5px',
+                borderStyle: 'solid',
+              }}
+              className={`w-full p-4 font-black text-left flex items-center justify-between tactile-btn ${bgClass} ${showResult && 'cursor-not-allowed'}`}
             >
-              <span className="mr-4 font-bold">
-                {String.fromCharCode(65 + index)}.
-              </span>
-              {option}
-              {showCorrect && ' ✓'}
-              {showIncorrect && ' ✗'}
+              <div className="flex items-center">
+                <span className="mr-4 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-lg text-xs font-black">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                {option}
+              </div>
+              <div className="font-extrabold">
+                {showCorrect && ' ✓'}
+                {showIncorrect && ' ✗'}
+              </div>
             </button>
           );
         })}
@@ -213,9 +230,9 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
 
       {/* Pronunciation */}
       {question && (
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-300 dark:border-blue-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            <span className="font-bold">Pronunciation: </span>
+        <div className="p-4 bg-blue-500/5 dark:bg-blue-500/10 rounded-2xl border border-blue-500/15">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            <span className="font-black text-blue-500">Pronunciation: </span>
             {question.word.pronunciation}
           </p>
         </div>

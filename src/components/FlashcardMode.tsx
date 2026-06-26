@@ -6,6 +6,21 @@ interface FlashcardModeProps {
   onClose: () => void;
 }
 
+const getExampleSentence = (word: GermanWord) => {
+  const isNoun = !!word.article;
+  if (isNoun) {
+    const art = word.article ? word.article + ' ' : '';
+    return {
+      german: `Das ist ${art}${word.german}.`,
+      english: `That is the ${word.english.toLowerCase()}.`
+    };
+  }
+  return {
+    german: `Ich sage: ${word.german}.`,
+    english: `I say: ${word.english.toLowerCase()}.`
+  };
+};
+
 const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
   const [words, setWords] = useState<GermanWord[]>([]);
@@ -13,6 +28,8 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [started, setStarted] = useState(false);
   const [stats, setStats] = useState({ correct: 0, incorrect: 0 });
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+  const [mastered, setMastered] = useState<Record<string, boolean>>({});
 
   const startSession = () => {
     const selectedWords = selectedCategory === 'All'
@@ -20,6 +37,9 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
       : getRandomWordsByCategory(20, selectedCategory);
     setWords(selectedWords);
     setStarted(true);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setStats({ correct: 0, incorrect: 0 });
   };
 
   const handleFlip = () => {
@@ -44,61 +64,51 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
     }, 300);
   };
 
+  const toggleFavorite = (wordId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => ({ ...prev, [wordId]: !prev[wordId] }));
+  };
+
+  const toggleMastery = (wordId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMastered(prev => ({ ...prev, [wordId]: !prev[wordId] }));
+  };
+
   if (!started) {
     const categories = getCategories();
     
     return (
-      <div className="text-center space-y-6">
-        <h1 className="text-4xl font-bold">🃏 Flashcard Mode</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Review vocabulary with interactive flashcards
+      <div className="text-center space-y-6 animate-slide-up max-w-xl mx-auto p-4">
+        <div className="text-5xl">🃏</div>
+        <h1 className="text-3xl font-black">Flashcard Mode</h1>
+        <p className="text-sm opacity-60">
+          Review A1/A2 vocabulary with premium interactive flipping cards
         </p>
 
-        <div className="space-y-4 max-w-md mx-auto">
-          <div>
-            <label className="block text-lg font-bold mb-4">Select Category</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`py-2 px-3 text-sm font-bold rounded-lg transition-all ${
-                    selectedCategory === category
-                      ? 'bg-primary text-white scale-105'
-                      : 'bg-gray-200 dark:bg-gray-700'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+        <div className="space-y-4 bg-white/5 border border-white/10 p-5 rounded-3xl text-left">
+          <label className="block text-sm font-black opacity-60 mb-2">Select Category</label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`py-2 px-3 text-xs font-bold rounded-xl transition-all ${
+                  selectedCategory === category
+                    ? 'bg-purple-600 text-white scale-105 shadow-lg shadow-purple-500/30'
+                    : 'bg-white/5 border border-white/5 hover:bg-white/10 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
           </div>
         </div>
 
         <button
           onClick={startSession}
-          className="button-primary text-xl"
+          className="glow-btn glow-btn-purple w-full py-4 rounded-2xl font-black text-sm"
         >
-          ▶ Start Flashcard Session
-        </button>
-      </div>
-    );
-  }
-
-  if (currentIndex >= words.length) {
-    return (
-      <div className="text-center space-y-6">
-        <h1 className="text-4xl font-bold">🎉 Session Complete!</h1>
-        <div className="space-y-4">
-          <div className="game-card p-6">
-            <p className="text-lg">Total Cards: <span className="font-bold">{words.length}</span></p>
-            <p className="text-lg">Known: <span className="font-bold text-green-600">{stats.correct}</span></p>
-            <p className="text-lg">Need Practice: <span className="font-bold text-red-600">{stats.incorrect}</span></p>
-            <p className="text-lg">Accuracy: <span className="font-bold">{Math.round((stats.correct / words.length) * 100)}%</span></p>
-          </div>
-        </div>
-        <button onClick={onClose} className="button-primary">
-          Back to Dashboard
+          ▶ Start Flashcards
         </button>
       </div>
     );
@@ -106,28 +116,29 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
 
   const currentWord = words[currentIndex];
   const progressPercent = ((currentIndex) / words.length) * 100;
+  const example = currentWord ? getExampleSentence(currentWord) : { german: '', english: '' };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-xl mx-auto p-4 animate-slide-up">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">🃏 Flashcard Mode</h1>
-          <p className="text-gray-600 dark:text-gray-400">Card {currentIndex + 1} of {words.length}</p>
+          <h1 className="text-2xl font-black">🃏 Flashcards</h1>
+          <p className="text-xs opacity-60">Card {currentIndex + 1} of {words.length}</p>
         </div>
-        <button onClick={onClose} className="button-secondary">
+        <button onClick={onClose} className="button-secondary text-xs px-4 py-2 rounded-xl">
           ✕ Close
         </button>
       </div>
 
       {/* Progress Bar */}
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+      <div className="progress-track">
+        <div className="progress-fill-animated" style={{ width: `${progressPercent}%`, background: 'var(--color-purple)' }}></div>
       </div>
 
       {/* Flashcard */}
       <div 
-        className="relative w-full h-80 cursor-pointer"
+        className="relative w-full h-96 cursor-pointer"
         style={{ perspective: '1000px' }}
         onClick={handleFlip}
       >
@@ -143,26 +154,66 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
             className="absolute w-full h-full"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
           >
-            <div className="game-card h-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-8 rounded-lg border-2 border-blue-300 dark:border-blue-700 flex flex-col items-center justify-center">
-              <p className="text-sm text-gray-500 dark:text-gray-500 mb-2">German</p>
-              <h2 className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-4">{currentWord.german}</h2>
-              {currentWord.article && (
-                <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">{currentWord.article}</p>
-              )}
-              {currentWord.pronunciation && (
-                <p className="text-lg text-gray-500 dark:text-gray-500 mb-4">{currentWord.pronunciation}</p>
-              )}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  SpeechManager.speak(currentWord.german);
-                }}
-                className="button-secondary px-6 py-2"
-                title="Listen to pronunciation"
-              >
-                🔊 Listen
-              </button>
-              <p className="text-sm text-gray-400 mt-4">Click to flip</p>
+            <div className="h-full bg-gradient-to-br from-indigo-500/5 to-purple-500/5 border border-indigo-500/20 p-6 rounded-3xl flex flex-col justify-between shadow-xl"
+              style={{ background: 'var(--color-surface)' }}>
+              {/* Card Actions */}
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black opacity-40 uppercase tracking-widest">German</span>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={(e) => toggleMastery(currentWord.id, e)}
+                    className={`p-2 rounded-xl text-sm transition-all border ${
+                      mastered[currentWord.id] 
+                        ? 'bg-yellow-500/20 border-yellow-500/40 text-yellow-500' 
+                        : 'bg-white/5 border-white/5 opacity-40 hover:opacity-100'
+                    }`}
+                    title="Mark as Mastered"
+                  >
+                    🏆
+                  </button>
+                  <button 
+                    onClick={(e) => toggleFavorite(currentWord.id, e)}
+                    className={`p-2 rounded-xl text-sm transition-all border ${
+                      favorites[currentWord.id] 
+                        ? 'bg-red-500/20 border-red-500/40 text-red-500' 
+                        : 'bg-white/5 border-white/5 opacity-40 hover:opacity-100'
+                    }`}
+                    title="Add to Favorites"
+                  >
+                    ❤️
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Content */}
+              <div className="text-center space-y-3">
+                {currentWord.article && (
+                  <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    {currentWord.article}
+                  </span>
+                )}
+                <h2 className="text-4xl font-extrabold text-indigo-500">{currentWord.german}</h2>
+                {currentWord.pronunciation && (
+                  <p className="text-sm opacity-50 italic">[{currentWord.pronunciation}]</p>
+                )}
+              </div>
+
+              {/* Example & Audio */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-xs opacity-65 text-center px-4">
+                  <p className="font-bold text-slate-700 dark:text-slate-300">"{example.german}"</p>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    SpeechManager.speak(currentWord.german);
+                  }}
+                  className="w-10 h-10 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-500 flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
+                  title="Listen pronunciation"
+                >
+                  🔊
+                </button>
+              </div>
             </div>
           </div>
 
@@ -175,27 +226,40 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
               transform: 'rotateY(180deg)' 
             }}
           >
-            <div className="game-card h-full bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 p-8 rounded-lg border-2 border-green-300 dark:border-green-700 flex flex-col items-center justify-center">
-              <p className="text-sm text-gray-500 dark:text-gray-500 mb-2">English</p>
-              <h2 className="text-5xl font-bold text-green-600 dark:text-green-400 mb-4">{currentWord.english}</h2>
-              {currentWord.category && (
-                <p className="text-lg text-gray-600 dark:text-gray-400">Category: {currentWord.category}</p>
-              )}
-              <p className="text-sm text-gray-400 mt-4">Click to flip back</p>
+            <div className="h-full bg-gradient-to-br from-green-500/5 to-teal-500/5 border border-green-500/20 p-6 rounded-3xl flex flex-col justify-between shadow-xl"
+              style={{ background: 'var(--color-surface)' }}>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black opacity-40 uppercase tracking-widest">English</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20">
+                  {currentWord.category}
+                </span>
+              </div>
+
+              {/* Main Content */}
+              <div className="text-center space-y-2">
+                <h2 className="text-4xl font-extrabold text-green-500">{currentWord.english}</h2>
+                <p className="text-xs opacity-50">Translation</p>
+              </div>
+
+              {/* Translation Example */}
+              <div className="text-center px-4 pb-4">
+                <p className="text-xs opacity-50 mb-1">Example Translation</p>
+                <p className="text-xs font-bold opacity-75">"{example.english}"</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Rating Buttons */}
+      {/* Action Rating Buttons */}
       {isFlipped && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 animate-slide-up">
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleRating(false);
             }}
-            className="button-secondary py-4 text-lg bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50"
+            className="py-3.5 rounded-2xl text-xs font-black border-2 border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-red-500 transition-all active:scale-95"
           >
             ❌ Need Practice
           </button>
@@ -204,22 +268,22 @@ const FlashcardMode: React.FC<FlashcardModeProps> = ({ onClose }) => {
               e.stopPropagation();
               handleRating(true);
             }}
-            className="button-primary py-4 text-lg"
+            className="py-3.5 rounded-2xl text-xs font-black bg-green-500 text-white shadow-lg shadow-green-500/30 hover:bg-green-600 transition-all active:scale-95"
           >
             ✓ I Know This
           </button>
         </div>
       )}
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="game-card p-4 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Known</p>
-          <p className="text-2xl font-bold text-green-600">{stats.correct}</p>
+      {/* Stats footer */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-green-500/5 border border-green-500/10 p-3 rounded-2xl text-center">
+          <p className="text-[10px] opacity-50 font-bold uppercase tracking-wider">Known</p>
+          <p className="text-xl font-black text-green-500">{stats.correct}</p>
         </div>
-        <div className="game-card p-4 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Need Practice</p>
-          <p className="text-2xl font-bold text-red-600">{stats.incorrect}</p>
+        <div className="bg-red-500/5 border border-red-500/10 p-3 rounded-2xl text-center">
+          <p className="text-[10px] opacity-50 font-bold uppercase tracking-wider">Review</p>
+          <p className="text-xl font-black text-red-500">{stats.incorrect}</p>
         </div>
       </div>
     </div>

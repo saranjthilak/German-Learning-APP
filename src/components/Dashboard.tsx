@@ -115,8 +115,8 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       {/* ── User welcome banner ──────────────────────────────────────────── */}
       {user ? (
         <div style={{
-          background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(168,85,247,0.15))',
-          border: '1px solid rgba(99,179,237,0.2)',
+          background: 'linear-gradient(135deg, rgba(168,85,247,0.1), rgba(99,179,237,0.1))',
+          border: '1px solid var(--color-border)',
           borderRadius: 20,
           padding: '10px 16px',
           display: 'flex',
@@ -165,26 +165,26 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       <div
         className="animate-slide-up"
         style={{
-          background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a5f 100%)',
-          borderRadius: 20,
-          padding: '18px 20px',
+          background: 'var(--color-surface)',
+          borderRadius: 24,
+          padding: '20px 24px',
           display: 'flex',
           alignItems: 'center',
-          gap: 16,
-          border: '1px solid rgba(99,179,237,0.15)',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
+          gap: 20,
+          border: '1px solid var(--color-border)',
+          boxShadow: 'var(--shadow-card)',
           position: 'relative',
           overflow: 'hidden',
         }}>
         {/* Background glow orbs */}
-        <div style={{ position: 'absolute', top: -30, right: -30, width: 140, height: 140, borderRadius: '50%', background: 'radial-gradient(circle, rgba(168,85,247,0.2), transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -20, left: 60, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.15), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 140, height: 140, borderRadius: '50%', background: 'radial-gradient(circle, rgba(168,85,247,0.15), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -20, left: 60, width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.1), transparent 70%)', pointerEvents: 'none' }} />
 
         {/* Mascot */}
         <div
           className={`animate-float ${mascotWiggle ? 'animate-wiggle' : ''}`}
           onClick={() => { setMascotWiggle(true); setTimeout(() => setMascotWiggle(false), 600); }}
-          style={{ fontSize: 56, cursor: 'pointer', flexShrink: 0, userSelect: 'none', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}
+          style={{ fontSize: 56, cursor: 'pointer', flexShrink: 0, userSelect: 'none', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))' }}
           title="Click me!"
         >
           🦉
@@ -192,7 +192,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
 
         {/* Text */}
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 12, color: 'rgba(167,139,250,0.9)', fontWeight: 700, marginBottom: 2 }}>
+          <p style={{ fontSize: 12, color: 'var(--color-purple)', fontWeight: 700, marginBottom: 2 }}>
             Your daily German coach
           </p>
           <h2 style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.2, marginBottom: 6 }}>
@@ -214,7 +214,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
                 style={{
                   width: `${xpProgress}%`,
                   background: 'linear-gradient(90deg, #818cf8, #a855f7)',
-                  boxShadow: '0 0 12px rgba(168,85,247,0.5)',
+                  boxShadow: '0 0 12px rgba(168,85,247,0.3)',
                 }}
               />
             </div>
@@ -222,16 +222,13 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         </div>
       </div>
 
-      {/* ── 4 Animated Stat Cards ─────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}
+      {/* ── 4 Premium Stat Cards ─────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}
         className="sm:grid-cols-4">
         {/* Streak */}
-        <div className="stat-card animate-slide-up" style={{
-          background: 'linear-gradient(135deg, #7c2d12, #ea580c)',
-          animation: 'slide-up 0.5s 0.1s ease-out both',
-        }}>
-          <div style={{ fontSize: 22, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>🔥</div>
-          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#fed7aa' }}>
+        <div className="stat-card bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400">
+          <div style={{ fontSize: 22, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.15))' }}>🔥</div>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, marginTop: 4 }}>
             <AnimatedNumber target={userData.stats.currentStreak} />
           </div>
           <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Day Streak</div>
@@ -239,42 +236,33 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
             <div style={{
               position: 'absolute', top: 8, right: 8,
               animation: 'pulse-ring 2s infinite',
-              width: 8, height: 8, borderRadius: '50%', background: '#fed7aa',
+              width: 8, height: 8, borderRadius: '50%', background: '#f97316',
             }} />
           )}
         </div>
 
         {/* XP */}
-        <div className="stat-card animate-slide-up" style={{
-          background: 'linear-gradient(135deg, #713f12, #ca8a04)',
-          animation: 'slide-up 0.5s 0.2s ease-out both',
-        }}>
+        <div className="stat-card bg-yellow-500/5 dark:bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400">
           <div style={{ fontSize: 22 }}>⚡</div>
-          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#fef08a' }}>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, marginTop: 4 }}>
             <AnimatedNumber target={userData.stats.totalXP} />
           </div>
           <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Total XP</div>
         </div>
 
         {/* Words */}
-        <div className="stat-card animate-slide-up" style={{
-          background: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
-          animation: 'slide-up 0.5s 0.3s ease-out both',
-        }}>
+        <div className="stat-card bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
           <div style={{ fontSize: 22 }}>📚</div>
-          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#bfdbfe' }}>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, marginTop: 4 }}>
             <AnimatedNumber target={userData.stats.wordsLearned} />
           </div>
           <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Words Learned</div>
         </div>
 
         {/* Accuracy */}
-        <div className="stat-card animate-slide-up" style={{
-          background: 'linear-gradient(135deg, #14532d, #16a34a)',
-          animation: 'slide-up 0.5s 0.4s ease-out both',
-        }}>
+        <div className="stat-card bg-green-500/5 dark:bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400">
           <div style={{ fontSize: 22 }}>🎯</div>
-          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, color: '#bbf7d0' }}>
+          <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, marginTop: 4 }}>
             <AnimatedNumber target={userData.stats.accuracy} suffix="%" />
           </div>
           <div style={{ fontSize: 11, opacity: 0.75, fontWeight: 700 }}>Accuracy</div>
@@ -282,19 +270,14 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       </div>
 
       {/* ── Daily Goal + Today's Challenge ────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
 
         {/* Daily Goal */}
-        <div className="game-card" style={{
-          background: 'linear-gradient(135deg, #1f2937, #111827)',
-          border: `1px solid ${dailyColor}33`,
-          padding: 14,
-          boxShadow: `0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px ${dailyColor}22`,
-        }}>
+        <div className="game-card p-5 border border-slate-200 dark:border-slate-800" style={{ background: 'var(--color-surface)' }}>
           <p style={{ fontSize: 11, fontWeight: 800, opacity: 0.6, marginBottom: 8 }}>📅 DAILY GOAL</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ position: 'relative', flexShrink: 0 }}>
-              <CircleRing pct={dailyPct} size={56} stroke={6} color={dailyColor} />
+              <CircleRing pct={dailyPct} size={58} stroke={6} color={dailyColor} />
               <div style={{
                 position: 'absolute', inset: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -315,17 +298,12 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
         </div>
 
         {/* Today's Challenge */}
-        <div className="game-card" style={{
-          background: 'linear-gradient(135deg, #3d2a00, #92400e)',
-          border: '1px solid rgba(250,204,21,0.3)',
-          padding: 14,
-          boxShadow: '0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(250,204,21,0.15)',
-        }}>
+        <div className="game-card p-5 border border-amber-500/25 bg-amber-500/5 dark:bg-amber-500/10">
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#fcd34d' }}>⚡ CHALLENGE</span>
+            <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--color-streak)' }}>⚡ CHALLENGE</span>
             <span style={{
               fontSize: 9, fontWeight: 800, padding: '1px 5px', borderRadius: 999,
-              background: 'rgba(250,204,21,0.2)', color: '#facc15', border: '1px solid rgba(250,204,21,0.35)',
+              background: 'rgba(250,204,21,0.2)', color: 'var(--color-xp)', border: '1px solid rgba(250,204,21,0.35)',
             }}>+50 XP</span>
           </div>
           <p style={{ fontSize: 13, fontWeight: 800, marginBottom: 2 }}>
@@ -354,77 +332,38 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       {/* ── Tutor and Flashcard Side by Side ──────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* AI Voice Tutor Hero */}
-        <div className="game-card animate-slide-up" style={{
-          background: 'linear-gradient(135deg, #0a1628 0%, #1a0e3d 40%, #0d2818 100%)',
-          border: '1px solid rgba(34,197,94,0.25)',
-          padding: '20px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 18,
-          boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(34,197,94,0.1)',
-          position: 'relative',
-          overflow: 'hidden',
-          height: '100%',
-        }}>
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, borderRadius: '50%', background: 'radial-gradient(circle, rgba(34,197,94,0.1), transparent 65%)', pointerEvents: 'none' }} />
-
-          {/* Mic Icon */}
-          <div style={{ flexShrink: 0, textAlign: 'center' }}>
-            <div style={{
-              width: 60, height: 60, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 28,
-              animation: 'pulse-green 2.5s infinite',
-              boxShadow: '0 4px 15px rgba(34,197,94,0.3)',
-            }}>
-              🎙️
-            </div>
+        <div className="game-card p-5 border border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-500/10 relative overflow-hidden flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-500 flex items-center justify-center text-3xl shadow-md flex-shrink-0 animate-float">
+            🎙️
           </div>
-
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900 }}>AI Voice Tutor</h3>
-              <span style={{
-                fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 999,
-                background: 'rgba(34,197,94,0.2)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)',
-              }}>LENA ✨</span>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-black text-sm">AI Voice Tutor</h3>
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">LENA ✨</span>
             </div>
-            <p style={{ fontSize: 12, opacity: 0.6, marginBottom: 12, lineHeight: 1.4 }}>
-              Have a real German conversation with your AI tutor. Get instant help when you struggle.
-            </p>
+            <p className="text-xs opacity-60 mb-3">Speak German with your AI tutor.</p>
             <button
-              className="glow-btn glow-btn-green"
               onClick={() => onStartTutor?.()}
-              style={{ fontSize: 13, padding: '10px 20px', borderRadius: 12 }}
+              className="glow-btn glow-btn-green py-2 px-4 rounded-xl text-xs font-extrabold"
             >
-              🎙️ Start Speaking Now
+              Start Speaking
             </button>
           </div>
         </div>
 
         {/* Flashcard Mode Card */}
-        <div className="game-card" style={{
-          background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
-          border: '1px solid rgba(99,179,237,0.2)',
-          padding: 20,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          height: '100%',
-        }}>
-          <div style={{ fontSize: 36, flexShrink: 0 }}>🃏</div>
-          <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 900, marginBottom: 2 }}>Flashcard Mode</h3>
-            <p style={{ fontSize: 12, opacity: 0.55, marginBottom: 10 }}>
-              Review vocabulary with interactive flashcards at your own pace
-            </p>
+        <div className="game-card p-5 border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-500/10 relative overflow-hidden flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-400 to-purple-500 flex items-center justify-center text-3xl shadow-md flex-shrink-0">
+            🃏
+          </div>
+          <div className="flex-1">
+            <h3 className="font-black text-sm mb-1">Flashcard Mode</h3>
+            <p className="text-xs opacity-60 mb-3">Review vocabulary at your own pace.</p>
             <button
               onClick={() => { window.location.hash = 'flashcard'; }}
-              className="glow-btn glow-btn-purple"
-              style={{ fontSize: 12, padding: '8px 16px', borderRadius: 10 }}
+              className="glow-btn glow-btn-purple py-2 px-4 rounded-xl text-xs font-extrabold"
             >
-              Start Flashcards →
+              Start Cards
             </button>
           </div>
         </div>
@@ -432,7 +371,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
 
       {/* ── Choose Your Game ──────────────────────────────────────────────── */}
       {onSelectGame && <GameMenu onSelectGame={onSelectGame} />}
-
 
       {/* ── Detailed sections ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
