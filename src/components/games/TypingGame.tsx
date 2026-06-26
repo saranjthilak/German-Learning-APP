@@ -209,9 +209,6 @@ const TypingGame: React.FC<TypingGameProps> = ({ onComplete }) => {
         <p className="font-bold">
           <span className="text-orange-600 dark:text-orange-400">Current Streak: {streak} 🔥</span>
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Pronunciation: <span className="font-bold">{currentWord.pronunciation}</span>
-        </p>
       </div>
     </div>
   );
