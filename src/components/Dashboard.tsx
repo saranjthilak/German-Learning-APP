@@ -291,7 +291,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData, user, syncing, onStartT
       </div>
 
       {/* ── Daily Goal + Today's Challenge ────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
         {/* Daily Goal */}
         <div className="game-card p-5 border border-slate-200 dark:border-slate-800" style={{ background: 'var(--color-surface)' }}>

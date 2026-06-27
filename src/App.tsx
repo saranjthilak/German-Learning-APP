@@ -232,10 +232,10 @@ const AppInner: React.FC = () => {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
             {/* Logo */}
-            <div className="flex md:hidden items-center gap-10 cursor-pointer"
+            <div className="flex md:hidden items-center gap-2 cursor-pointer"
               onClick={() => { window.location.hash = ''; setActiveTab('home'); }}>
-              <span style={{ fontSize: 26 }}>🇩🇪</span>
-              <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.3px' }}>Deutsch</span>
+              <span style={{ fontSize: 24 }}>🇩🇪</span>
+              <span style={{ fontWeight: 900, fontSize: 16, letterSpacing: '-0.3px' }} className="hidden sm:inline">Deutsch</span>
             </div>
 
             {/* Desktop Section Header */}
@@ -244,33 +244,28 @@ const AppInner: React.FC = () => {
             </div>
 
             {/* Center stats strip */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ fontSize: 16 }}>🔥</span>
-                <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--color-streak)' }}>{userData.stats.currentStreak}</span>
+            <div className="flex items-center gap-2 sm:gap-4 md:gap-5">
+              <div className="flex items-center gap-1">
+                <span className="text-sm sm:text-base">🔥</span>
+                <span className="font-extrabold text-xs sm:text-sm text-orange-500">{userData.stats.currentStreak}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ fontSize: 16 }}>⚡</span>
-                <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--color-xp)' }}>{userData.stats.totalXP}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-sm sm:text-base">⚡</span>
+                <span className="font-extrabold text-xs sm:text-sm text-yellow-500">{userData.stats.totalXP}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ fontSize: 16 }}>🪙</span>
-                <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--color-coin)' }}>{userData.stats.coins ?? 100}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-sm sm:text-base">🪙</span>
+                <span className="font-extrabold text-xs sm:text-sm text-amber-500">{userData.stats.coins ?? 100}</span>
               </div>
-              <div style={{
-                background: 'rgba(168,85,247,0.15)',
-                border: '1px solid rgba(168,85,247,0.3)',
-                borderRadius: 999, padding: '4px 10px',
-                fontSize: 12, fontWeight: 800, color: 'var(--color-purple)',
-              }}>
+              <div className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2 py-0.5 sm:px-3 text-[10px] sm:text-xs font-black text-purple-600 dark:text-purple-400">
                 Lv.{userData.stats.level}
               </div>
             </div>
 
             {/* Right actions */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
               {syncing && (
-                <span style={{ fontSize: 11, color: '#60a5fa', fontWeight: 700 }}>⟳ Syncing…</span>
+                <span className="text-[9px] sm:text-xs text-blue-400 font-extrabold">⟳ Syncing…</span>
               )}
               
               <ThemeToggle 
@@ -286,10 +281,11 @@ const AppInner: React.FC = () => {
                 onClick={() => { window.location.hash = showSettings ? '' : 'settings'; }}
                 style={{
                   background: 'rgba(255,255,255,0.07)', border: '1px solid var(--color-border)',
-                  borderRadius: 10, width: 36, height: 36, cursor: 'pointer', fontSize: 16,
+                  borderRadius: 10, width: 32, height: 32, cursor: 'pointer', fontSize: 14,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'background 0.15s',
                 }}
+                className="sm:w-9 sm:h-9 sm:text-base"
                 title="Settings"
               >⚙️</button>
 
@@ -297,8 +293,8 @@ const AppInner: React.FC = () => {
                 <button
                   id="back-btn"
                   onClick={() => { window.location.hash = ''; }}
-                  className="button-secondary"
-                  style={{ padding: '7px 14px', fontSize: 13, borderRadius: 10 }}
+                  className="button-secondary px-2 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs rounded-xl"
+                  style={{ borderRadius: 10 }}
                 >
                   ← Back
                 </button>
