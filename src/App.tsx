@@ -115,11 +115,6 @@ const AppInner: React.FC = () => {
     if (tab === 'profile') { window.location.hash = 'settings'; }
   };
 
-  const getInitials = (name: string | null | undefined) => {
-    if (!name) return '?';
-    return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-  };
-
   // ── Render content ──────────────────────────────────────────────────────────
   const renderContent = () => {
     if (showSettings) return <Settings onClose={() => { window.location.hash = ''; }} userData={userData} onSaveUserData={handleSaveUserData} />;
@@ -155,68 +150,8 @@ const AppInner: React.FC = () => {
       {/* Confetti overlay */}
       {showConfetti && <Confetti onDone={() => setShowConfetti(false)} />}
 
-      {/* ── Desktop Sidebar ──────────────────────────────────────────────── */}
-      {!currentGame && (
-        <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 p-6 z-40 border-r border-slate-200 dark:border-slate-800"
-          style={{ background: 'var(--color-surface)', height: '100vh' }}>
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginBottom: 32 }}
-            onClick={() => { window.location.hash = ''; setActiveTab('home'); }}>
-            <span style={{ fontSize: 32 }}>🇩🇪</span>
-            <span style={{ fontWeight: 900, fontSize: 22, letterSpacing: '-0.3px' }}>Deutsch</span>
-          </div>
-
-          {/* Navigation Links */}
-          <div className="flex-1 flex flex-col gap-2">
-            {([
-              { id: 'home',    icon: '🏠', label: 'Home'    },
-              { id: 'games',   icon: '🎮', label: 'Games'   },
-              { id: 'tutor',   icon: '🎙️', label: 'Tutor'   },
-              { id: 'profile', icon: '👤', label: 'Profile' },
-            ] as { id: Tab; icon: string; label: string }[]).map(tab => {
-              const active = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => goTab(tab.id)}
-                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl font-extrabold text-sm transition-all duration-200 text-left ${
-                    active 
-                      ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-2 border-purple-500/20' 
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border-2 border-transparent'
-                  }`}
-                >
-                  <span style={{ fontSize: 20 }}>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* User profile bottom bar */}
-          {user && (
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <div style={{
-                width: 38, height: 38, borderRadius: '50%', overflow: 'hidden',
-                background: 'linear-gradient(135deg,#63b3ed,#7c3aed)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 800, fontSize: 14, color: 'white', flexShrink: 0,
-              }}>
-                {user.photoURL
-                  ? <img src={user.photoURL} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : getInitials(user.displayName ?? user.email)
-                }
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-xs truncate">{user.displayName ?? 'Learner'}</p>
-                <p className="text-[10px] opacity-50 truncate">{user.email}</p>
-              </div>
-            </div>
-          )}
-        </aside>
-      )}
-
       {/* Main Content Layout Wrapper */}
-      <div className={`${!currentGame ? 'md:pl-64' : ''}`}>
+      <div>
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
         <header style={{
@@ -359,6 +294,38 @@ const AppInner: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+      {/* ── Global Bottom Navigation Bar (underneath content) ─────────────── */}
+      {!currentGame && !showSettings && (
+        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 dark:border-slate-800/80 bg-white/70 dark:bg-[#121826]/75 backdrop-blur-lg flex justify-around items-center py-2 px-4 shadow-lg max-w-lg mx-auto sm:rounded-t-3xl sm:border-x sm:bottom-2 sm:shadow-2xl"
+          style={{ transition: 'all 0.3s' }}>
+          {([
+            { id: 'home',    icon: '🏠', label: 'Home'    },
+            { id: 'games',   icon: '🎮', label: 'Games'   },
+            { id: 'tutor',   icon: '🎙️', label: 'Tutor'   },
+            { id: 'profile', icon: '👤', label: 'Profile' },
+          ] as { id: Tab; icon: string; label: string }[]).map(tab => {
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => goTab(tab.id)}
+                className={`flex flex-col items-center justify-center gap-0.5 py-1 px-4 rounded-2xl transition-all duration-200 font-extrabold text-[10px] sm:text-[11px] relative outline-none hover:scale-105 ${
+                  active 
+                    ? 'text-purple-600 dark:text-purple-400 scale-105' 
+                    : 'text-slate-500 dark:text-slate-400 hover:text-purple-500 dark:hover:text-purple-400'
+                }`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                <span className="text-xl sm:text-2xl">{tab.icon}</span>
+                <span>{tab.label}</span>
+                {active && (
+                  <div className="absolute bottom-0 w-8 h-0.5 bg-purple-500 rounded-full" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
       )}
     </div>
   );
