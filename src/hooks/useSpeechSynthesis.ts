@@ -30,12 +30,20 @@ const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
   const getBestVoice = useCallback(
     (lang: 'de-DE' | 'en-US'): SpeechSynthesisVoice | undefined => {
       const langCode = lang.toLowerCase();
-      // Prefer "neural" / "natural" voices for quality
+      
+      // To minimize text-to-speech startup lag, prioritize local service voices
+      const localVoice = voices.find(
+        (v) => v.lang.toLowerCase().startsWith(langCode.slice(0, 2)) && v.localService
+      );
+      if (localVoice) return localVoice;
+
+      // Fallback to "neural" / "natural" cloud-based voices for quality if local is not found
       const premium = voices.find(
         (v) => v.lang.toLowerCase().startsWith(langCode.slice(0, 2)) &&
                (v.name.toLowerCase().includes('neural') || v.name.toLowerCase().includes('natural'))
       );
       if (premium) return premium;
+      
       return voices.find((v) => v.lang.toLowerCase().startsWith(langCode.slice(0, 2)));
     },
     [voices]

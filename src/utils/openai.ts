@@ -205,8 +205,8 @@ export const sendMessage = async (
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: geminiContents,
       generationConfig: {
-        maxOutputTokens: 1000,
-        temperature: 0.8,
+        maxOutputTokens: 200,
+        temperature: 0.7,
       },
     }),
   });
