@@ -12,6 +12,47 @@ interface Question {
   correct: number;
 }
 
+const getExampleSentence = (word: GermanWord): { de: string; en: string } => {
+  const sentences: Record<string, { de: string; en: string }> = {
+    g1: { de: "Hallo! Wie geht es dir?", en: "Hello! How are you?" },
+    g2: { de: "Guten Morgen, mein Freund!", en: "Good morning, my friend!" },
+    g3: { de: "Guten Tag, Herr Schmidt.", en: "Good day, Mr. Schmidt." },
+    g12: { de: "Vielen Dank für das Geschenk.", en: "Thank you very much for the gift." },
+    f2: { de: "Meine Mutter kocht sehr gut.", en: "My mother cooks very well." },
+    f3: { de: "Mein Vater arbeitet im Büro.", en: "My father works in the office." },
+    f6: { de: "Ich habe einen jüngeren Bruder.", en: "I have a younger brother." },
+    f7: { de: "Meine Schwester lernt Deutsch.", en: "My sister is learning German." },
+    fd2: { de: "Frisches Brot schmeckt lecker.", en: "Fresh bread tastes delicious." },
+    fd5: { de: "Trinkst du Milch am Morgen?", en: "Do you drink milk in the morning?" },
+    fd10: { de: "Ein Apfel am Tag hält den Arzt fern.", en: "An apple a day keeps the doctor away." },
+    a1: { de: "Katzen schlafen gerne im Bett.", en: "Cats like to sleep in bed." },
+    a2: { de: "Der Hund läuft im Garten.", en: "The dog runs in the garden." },
+    c1: { de: "Rot ist meine Lieblingsfarbe.", en: "Red is my favorite color." },
+    c2: { de: "Der Himmel ist heute blau.", en: "The sky is blue today." },
+    n1: { de: "Ich habe eins Katze.", en: "I have one cat." },
+    n2: { de: "Zwei Kaffee, bitte.", en: "Two coffees, please." },
+  };
+  
+  if (sentences[word.id]) return sentences[word.id];
+  
+  if (word.category === 'Food') {
+    return { 
+      de: `Ich mag ${word.article ? `${word.article} ` : ''}${word.german}.`, 
+      en: `I like the ${word.english.toLowerCase()}.` 
+    };
+  }
+  if (word.category === 'Family') {
+    return { 
+      de: `Das ist mein ${word.german}.`, 
+      en: `That is my ${word.english.toLowerCase()}.` 
+    };
+  }
+  return { 
+    de: `Wir lernen das Wort: ${word.german}.`, 
+    en: `We are learning the word: ${word.english.toLowerCase()}.` 
+  };
+};
+
 const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
   const [wordsCount, setWordsCount] = useState(10);
   const [selectedCategory, setSelectedCategory] = useState<string>('Level A1');
@@ -210,10 +251,41 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
         <p className="text-xs opacity-50">Select the correct English translation</p>
       </div>
 
-      {/* Encouragement message */}
+      {/* Rich Feedback Card */}
       {showResult && (
-        <div className="text-center py-1 animate-float text-xs font-black text-purple-500">
-          {selectedAnswer === question.correct ? '🎉 Super! Correct Answer!' : '💪 Keep learning, you can do it!'}
+        <div className="animate-slide-up p-5 rounded-2xl border text-center space-y-2.5"
+          style={{
+            background: selectedAnswer === question.correct 
+              ? 'rgba(34, 197, 94, 0.08)' 
+              : 'rgba(239, 68, 68, 0.08)',
+            borderColor: selectedAnswer === question.correct 
+              ? 'rgba(34, 197, 94, 0.2)' 
+              : 'rgba(239, 68, 68, 0.2)',
+          }}>
+          <div className="flex items-center justify-center gap-1.5">
+            <span style={{ fontSize: 20 }}>
+              {selectedAnswer === question.correct ? '🎉' : '💡'}
+            </span>
+            <h3 className={`text-sm font-black uppercase tracking-wider ${selectedAnswer === question.correct ? 'text-green-500' : 'text-red-500'}`}>
+              {selectedAnswer === question.correct ? 'Correct!' : 'Incorrect'}
+            </h3>
+          </div>
+          
+          <div>
+            <p className="text-2xl font-black text-white">
+              {question.word.article ? <span className="opacity-55 font-bold mr-1">{question.word.article}</span> : ''}
+              {question.word.german}
+            </p>
+            <p className="text-xs text-slate-400 font-bold mt-0.5">
+              {question.word.english} · <span className="italic text-purple-400 font-medium">/{question.word.pronunciation}/</span>
+            </p>
+          </div>
+          
+          <div className="pt-2 border-t border-white/5 text-[11px] text-slate-300">
+            <span className="font-extrabold text-slate-400 block mb-0.5">Example:</span>
+            <p className="font-black text-white">"{getExampleSentence(question.word).de}"</p>
+            <p className="text-slate-500">({getExampleSentence(question.word).en})</p>
+          </div>
         </div>
       )}
 
