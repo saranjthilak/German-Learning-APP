@@ -111,7 +111,7 @@ const TutorAvatar: React.FC<{ status: AIStatus }> = ({ status }) => {
           />
         )}
         <div 
-          className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg border-2 border-white/20 transition-all duration-300 ${animationClass}`}
+          className={`w-24 h-24 rounded-full flex items-center justify-center text-5xl shadow-lg border-2 border-white/20 transition-all duration-300 ${animationClass}`}
           style={{
             background: 'linear-gradient(135deg, #a855f7, #6366f1)',
             boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
@@ -395,12 +395,12 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
           overflowY: 'auto',
         }}>
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="w-full max-w-xl py-2">
+          <div className="w-full max-w-3xl py-2">
             {/* Header */}
             <div className="text-center mb-4">
-              <div className="text-3xl mb-1">🎙️</div>
-              <h1 className="text-xl font-black text-white mb-0.5">AI Voice Tutor</h1>
-              <p className="text-purple-300 text-xs">Speak German with your personal tutor, Lena</p>
+              <div className="text-4xl mb-1">🎙️</div>
+              <h1 className="text-2xl font-black text-white mb-0.5">AI Voice Tutor</h1>
+              <p className="text-purple-300 text-sm">Speak German with your personal tutor, Lena</p>
             </div>
 
             {/* API key warning */}
@@ -565,7 +565,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <div className="flex-shrink-0 border-b border-white/10">
-        <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto w-full">
+        <div className="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto w-full">
           <div className="flex items-center gap-2.5">
             <span className="text-xl">{currentTopic.icon}</span>
             <div>
@@ -589,7 +589,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
       {/* ── Chat area ───────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        <div className="max-w-2xl mx-auto w-full space-y-4">
+        <div className="max-w-4xl mx-auto w-full space-y-4">
           {messages.map((msg) => {
             const parts = getMessageParts(msg.content);
             const hasHint = parts.english.length > 0;
@@ -679,7 +679,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
       {/* ── Bottom mic area ──────────────────────────────────────────────── */}
       <div className="flex-shrink-0 border-t border-white/10 bg-black/10">
-        <div className="px-4 py-4 flex flex-col items-center gap-2 max-w-2xl mx-auto w-full">
+        <div className="px-4 py-4 flex flex-col items-center gap-2 max-w-4xl mx-auto w-full">
 
           {/* Instruction text */}
           <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
@@ -724,7 +724,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
           {/* Text input fallback */}
           {isMyTurn && (
-            <div className="flex w-full max-w-lg gap-2 mt-1">
+            <div className="flex w-full max-w-2xl gap-2 mt-1">
               <input
                 id="text-input-fallback"
                 type="text"
