@@ -58,8 +58,19 @@ const AppInner: React.FC = () => {
     setSyncing(true);
     loadCloudData(user.uid).then((cloudData) => {
       if (cloudData) {
-        setUserData(cloudData);
-        StorageManager.saveUserData(cloudData);
+        const local = StorageManager.getUserData();
+        // If local data is ahead of cloud data, merge and push to cloud
+        if (local.stats.totalXP > cloudData.stats.totalXP) {
+          const merged = { ...cloudData, ...local, stats: local.stats };
+          setUserData(merged);
+          StorageManager.saveUserData(merged);
+          saveCloudData(user.uid, merged);
+        } else {
+          setUserData(cloudData);
+          StorageManager.saveUserData(cloudData);
+        }
+      } else {
+        setUserData(StorageManager.getUserData());
       }
       setSyncing(false);
     });
@@ -102,6 +113,7 @@ const AppInner: React.FC = () => {
   }, [currentGame, user]);
 
   const handleSaveUserData = useCallback((updated: UserData) => {
+    StorageManager.saveUserData(updated);
     setUserData(updated);
     if (user) saveCloudData(user.uid, updated);
   }, [user]);

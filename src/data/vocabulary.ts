@@ -1079,6 +1079,26 @@ export function getWordsByCategory(category: string): GermanWord[] {
   return germanVocabulary.filter(word => word.category === category);
 }
 
+function getLocalWeakWordIds(): string[] {
+  try {
+    if (typeof window !== 'undefined') {
+      const raw = localStorage.getItem('german-vocab-game-data');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.weakWords)) {
+          // Sort weak words so the ones failed most often come first
+          return parsed.weakWords
+            .sort((a: any, b: any) => (b.incorrectCount || 0) - (a.incorrectCount || 0))
+            .map((w: any) => w.wordId);
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Error loading weak words in vocabulary:', e);
+  }
+  return [];
+}
+
 export function getRandomWords(count: number, excludeIds?: string[]): GermanWord[] {
   let pool = [...germanVocabulary];
   if (excludeIds && excludeIds.length > 0) {
@@ -1090,8 +1110,23 @@ export function getRandomWords(count: number, excludeIds?: string[]): GermanWord
       pool = [...filtered, ...learnedPool.slice(0, count - filtered.length)];
     }
   }
-  const shuffled = pool.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+
+  // Spaced Repetition weighting: inject up to 40% weak words
+  const weakIds = getLocalWeakWordIds();
+  const weakPool = pool.filter(w => weakIds.includes(w.id));
+  const normalPool = pool.filter(w => !weakIds.includes(w.id));
+
+  // Sort weak pool by how weak they are (based on index in weakIds)
+  weakPool.sort((a, b) => weakIds.indexOf(a.id) - weakIds.indexOf(b.id));
+
+  const targetWeakCount = Math.min(Math.ceil(count * 0.4), weakPool.length);
+  const selectedWeak = weakPool.slice(0, targetWeakCount);
+  const remainingCount = count - selectedWeak.length;
+
+  const selectedNormal = normalPool.sort(() => Math.random() - 0.5).slice(0, remainingCount);
+  const combined = [...selectedWeak, ...selectedNormal].sort(() => Math.random() - 0.5);
+
+  return combined;
 }
 
 export function getRandomWordsByCategory(count: number, category: string, excludeIds?: string[]): GermanWord[] {
@@ -1106,8 +1141,23 @@ export function getRandomWordsByCategory(count: number, category: string, exclud
       pool = [...filtered, ...learnedPool.slice(0, count - filtered.length)];
     }
   }
-  const shuffled = pool.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+
+  // Spaced Repetition weighting: inject up to 40% weak words matching category
+  const weakIds = getLocalWeakWordIds();
+  const weakPool = pool.filter(w => weakIds.includes(w.id));
+  const normalPool = pool.filter(w => !weakIds.includes(w.id));
+
+  // Sort weak pool by priority
+  weakPool.sort((a, b) => weakIds.indexOf(a.id) - weakIds.indexOf(b.id));
+
+  const targetWeakCount = Math.min(Math.ceil(count * 0.4), weakPool.length);
+  const selectedWeak = weakPool.slice(0, targetWeakCount);
+  const remainingCount = count - selectedWeak.length;
+
+  const selectedNormal = normalPool.sort(() => Math.random() - 0.5).slice(0, remainingCount);
+  const combined = [...selectedWeak, ...selectedNormal].sort(() => Math.random() - 0.5);
+
+  return combined;
 }
 
 export function getWordsByDifficulty(difficulty: 'easy' | 'medium' | 'hard'): GermanWord[] {

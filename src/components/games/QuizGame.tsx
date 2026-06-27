@@ -29,6 +29,30 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
     return () => clearInterval(timer);
   }, [gameStarted]);
 
+  const [liveFeedback, setLiveFeedback] = useState('');
+
+  useEffect(() => {
+    if (!gameStarted || showResult) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key === 'a' || key === '1') {
+        e.preventDefault();
+        handleAnswer(0);
+      } else if (key === 'b' || key === '2') {
+        e.preventDefault();
+        handleAnswer(1);
+      } else if (key === 'c' || key === '3') {
+        e.preventDefault();
+        handleAnswer(2);
+      } else if (key === 'd' || key === '4') {
+        e.preventDefault();
+        handleAnswer(3);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameStarted, showResult, questions, currentQuestion]);
+
   const startGame = () => {
     const learnedIds = StorageManager.getUserData().learnedWords || [];
     const selectedWords = selectedCategory === 'All' 
@@ -53,6 +77,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
     });
 
     setQuestions(gameQuestions);
+    setLiveFeedback('');
     setGameStarted(true);
   };
 
@@ -62,7 +87,13 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
     setShowResult(true);
 
     const isCorrect = index === questions[currentQuestion].correct;
-    const wordId = questions[currentQuestion].word.id;
+    const currentWord = questions[currentQuestion].word;
+    const feedbackMsg = isCorrect
+      ? `Correct! ${currentWord.german} = ${currentWord.english}.`
+      : `Incorrect. ${currentWord.german} = ${currentWord.english}. You chose ${questions[currentQuestion].options[index]}.`;
+    setLiveFeedback(feedbackMsg);
+
+    const wordId = currentWord.id;
 
     if (isCorrect) {
       setCorrectAnswers(prev => prev + 1);
@@ -72,12 +103,13 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
       StorageManager.addWeakWord(wordId, false);
     }
 
-    // Auto-advance to the next question or complete game after 1 second
+    // Auto-advance to the next question or complete game after 1.5 seconds
     setTimeout(() => {
       if (currentQuestion + 1 < questions.length) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
         setShowResult(false);
+        setLiveFeedback('');
       } else {
         setCorrectAnswers(latestCorrect => {
           const accuracy = Math.round((latestCorrect / wordsCount) * 100);
@@ -86,7 +118,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
           return latestCorrect;
         });
       }
-    }, 1000);
+    }, 1500);
   };
 
   if (!gameStarted) {
@@ -206,6 +238,8 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
               key={index}
               onClick={() => handleAnswer(index)}
               disabled={showResult}
+              role="button"
+              aria-label={`Option ${String.fromCharCode(65 + index)}: ${option}`}
               style={{
                 borderRadius: 20,
                 borderWidth: '1.5px',
@@ -237,6 +271,25 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
           </p>
         </div>
       )}
+
+      {/* Visually hidden accessibility announcer */}
+      <div
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: '0',
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: '0',
+        }}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {liveFeedback}
+      </div>
     </div>
   );
 };
