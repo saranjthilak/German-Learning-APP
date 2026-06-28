@@ -247,6 +247,11 @@ const QuizGame: React.FC<QuizGameProps> = ({ onComplete }) => {
       {/* Question Card */}
       <div className="game-card p-6 border border-purple-500/10 shadow-lg text-center"
         style={{ background: 'var(--color-surface)' }}>
+        {question.word.article && (
+          <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-2">
+            {question.word.article}
+          </p>
+        )}
         <h2 className="text-3xl font-extrabold mb-1">{question.word.german}</h2>
         <p className="text-xs opacity-50">Select the correct English translation</p>
       </div>

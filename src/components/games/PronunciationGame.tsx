@@ -222,7 +222,12 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
       )}
 
       {/* Word Card */}
-      <div className="game-card bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-8 rounded-lg border-2 border-red-300 dark:border-red-700">
+      <div className="game-card bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-8 rounded-lg border-2 border-red-300 dark:border-red-700 text-center">
+        {currentWord.article && (
+          <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-2">
+            {currentWord.article}
+          </p>
+        )}
         <p className="text-center text-gray-600 dark:text-gray-400 mb-4">Say this word:</p>
         <h2 className="text-5xl font-bold text-center text-red-600 dark:text-red-400 mb-6">
           {currentWord.german}
