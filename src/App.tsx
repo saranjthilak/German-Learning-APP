@@ -102,15 +102,10 @@ const AppInner: React.FC = () => {
     setUserData(updated);
     if (user) saveCloudData(user.uid, updated);
     
-    const coinsReward = 15 + (accuracy === 100 ? 10 : 0);
-    setSuccessData({
-      xp: xpEarned,
-      coins: coinsReward,
-      accuracy,
-      correct: correctAnswers,
-      total: totalAnswers,
-    });
+    // Direct ambient reward celebration: run confetti and go back to dashboard
     setShowConfetti(true);
+    setCurrentGame(null);
+    window.location.hash = '';
   }, [currentGame, user]);
 
   const handleSaveUserData = useCallback((updated: UserData) => {
@@ -193,9 +188,9 @@ const AppInner: React.FC = () => {
 
             {/* Center stats strip */}
             <div className="flex items-center gap-2 sm:gap-4 md:gap-5">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 bg-orange-500/10 dark:bg-orange-500/15 border border-orange-500/20 px-2 sm:px-2.5 py-0.5 rounded-full shadow-sm shadow-orange-500/5" title="Learning Streak">
                 <span className="text-sm sm:text-base">🔥</span>
-                <span className="font-extrabold text-xs sm:text-sm text-orange-500">{userData.stats.currentStreak}</span>
+                <span className="font-extrabold text-xs sm:text-sm text-orange-500">{userData.stats.currentStreak}d</span>
               </div>
               <div className="flex items-center gap-1">
                 <span className="text-sm sm:text-base">⚡</span>
@@ -251,63 +246,23 @@ const AppInner: React.FC = () => {
           </div>
         </header>
 
+        {/* Thin ambient progress bar below the header */}
+        <div className="w-full h-1 bg-slate-200 dark:bg-slate-800 overflow-hidden relative z-20">
+          <div 
+            className="h-full bg-gradient-to-r from-orange-500 to-yellow-500 transition-all duration-500"
+            style={{ width: `${progressPct}%` }}
+            title={`Daily Goal Progress: ${todayXP}/${DAILY_GOAL_XP} XP`}
+          />
+        </div>
+
         {/* ── Main content ─────────────────────────────────────────────────── */}
         <main style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px 100px' }}>
           {renderContent()}
         </main>
       </div>
 
-
-
       {/* Auth modal */}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
-
-      {/* Motivational Success Screen Modal */}
-      {successData && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 150,
-          background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: 16
-        }}>
-          <div className="glass-card animate-scale-in max-w-sm w-full p-6 text-center border border-white/10"
-               style={{ background: 'var(--color-surface)', borderRadius: 24, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)' }}>
-            <div style={{ fontSize: 50, marginBottom: 12 }}>🎉</div>
-            <h2 className="text-2xl font-black mb-2 text-white">Lektion Beendet!</h2>
-            <p className="text-xs text-purple-300 mb-6 font-bold">Awesome job! Keep up the great work.</p>
-            
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="rounded-xl p-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
-                <span className="text-2xl block mb-1">⚡</span>
-                <span className="text-lg font-black block">+{successData.xp}</span>
-                <span className="text-[10px] uppercase font-bold opacity-75">XP Earned</span>
-              </div>
-              <div className="rounded-xl p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                <span className="text-2xl block mb-1">🪙</span>
-                <span className="text-lg font-black block">+{successData.coins}</span>
-                <span className="text-[10px] uppercase font-bold opacity-75">Coins Won</span>
-              </div>
-            </div>
-
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl mb-6">
-              <div className="text-[10px] uppercase font-black tracking-wider opacity-75 mb-1">Accuracy</div>
-              <div className="text-base font-black">{successData.accuracy}%</div>
-              <div className="text-[9px] opacity-70">({successData.correct} / {successData.total} correct)</div>
-            </div>
-
-            <button
-              onClick={() => {
-                setSuccessData(null);
-                window.location.hash = '';
-              }}
-              className="w-full py-3 rounded-xl font-black text-white text-xs tactile-btn"
-              style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)' }}
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
       {/* ── Global Bottom Navigation Bar (underneath content) ─────────────── */}
       {!currentGame && !showSettings && (
         <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 dark:border-slate-800/80 bg-white/70 dark:bg-[#121826]/75 backdrop-blur-lg flex justify-around items-center py-2 px-4 shadow-lg max-w-lg mx-auto sm:rounded-t-3xl sm:border-x sm:bottom-2 sm:shadow-2xl"
