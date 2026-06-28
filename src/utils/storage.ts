@@ -21,7 +21,7 @@ const DEFAULT_USER_DATA: UserData = {
   weakWords: [],
   learnedWords: [],
   playerName: 'Player',
-  darkMode: false,
+  darkMode: true,
   tutorSessions: [],
 };
 

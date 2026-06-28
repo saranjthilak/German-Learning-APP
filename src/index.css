@@ -31,16 +31,16 @@
 }
 
 .dark {
-  /* Dark Mode Variables */
-  --color-bg:        #090d16;
-  --color-surface:   #121826;
-  --color-surface-hover: #1b2336;
-  --color-surface2:  #1f293d;
-  --color-border:    rgba(255, 255, 255, 0.06);
+  /* Dark Mode Variables — Premium Deep Indigo */
+  --color-bg:        #0f0f1a;
+  --color-surface:   #16162a;
+  --color-surface-hover: #1e1e38;
+  --color-surface2:  #252547;
+  --color-border:    rgba(255, 255, 255, 0.05);
   --color-text-main: #f8fafc;
   --color-text-sub:  #94a3b8;
   
-  --shadow-card:     0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-card:     0 12px 40px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────────── */
