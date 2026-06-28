@@ -31,13 +31,14 @@ const AppInner: React.FC = () => {
   const [syncing, setSyncing]           = useState(false);
   const [activeTab, setActiveTab]       = useState<Tab>('home');
   const [showConfetti, setShowConfetti] = useState(false);
-  const [successData, setSuccessData]   = useState<{
-    xp: number;
-    coins: number;
-    accuracy: number;
-    correct: number;
-    total: number;
-  } | null>(null);
+
+  // Ambient Daily Goal Progress
+  const gameSessions = userData.gameSessions ?? [];
+  const todayStr = new Date().toDateString();
+  const todaySessions = gameSessions.filter(s => new Date(s.timestamp).toDateString() === todayStr);
+  const todayXP = todaySessions.reduce((sum, s) => sum + s.xpEarned, 0);
+  const DAILY_GOAL_XP = 50;
+  const progressPct = Math.min(100, (todayXP / DAILY_GOAL_XP) * 100);
 
   // Apply dark mode state
   useEffect(() => {
