@@ -77,7 +77,12 @@ const getMessageParts = (content: string) => {
 };
 
 // ── Tutor Avatar Component ────────────────────────────────────────────────────
-const TutorAvatar: React.FC<{ status: AIStatus }> = ({ status }) => {
+interface TutorAvatarProps {
+  status: AIStatus;
+  emotion?: string;
+}
+
+const TutorAvatar: React.FC<TutorAvatarProps> = ({ status, emotion = '' }) => {
   let statusEmoji = '🦉';
   let animationClass = 'animate-float';
   let pulseRing = false;
@@ -89,7 +94,24 @@ const TutorAvatar: React.FC<{ status: AIStatus }> = ({ status }) => {
     pulseRing = true;
     ringColor = 'rgba(59, 130, 246, 0.6)';
   } else if (status === 'speaking') {
-    statusEmoji = '🗣️';
+    // Map Lena's German action words to expressive avatar emojis
+    if (emotion.includes('lächelt')) {
+      statusEmoji = '😊';
+    } else if (emotion.includes('lacht')) {
+      statusEmoji = '😆';
+    } else if (emotion.includes('nickt')) {
+      statusEmoji = '😌';
+    } else if (emotion.includes('überlegt')) {
+      statusEmoji = '🤔';
+    } else if (emotion.includes('staunt')) {
+      statusEmoji = '🤩';
+    } else if (emotion.includes('mitfühlend')) {
+      statusEmoji = '🥺';
+    } else if (emotion.includes('zwinkert')) {
+      statusEmoji = '😉';
+    } else {
+      statusEmoji = '🗣️';
+    }
     animationClass = 'animate-wiggle';
     pulseRing = true;
     ringColor = 'rgba(16, 185, 129, 0.6)';
@@ -549,6 +571,9 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
   // ─────────────────────────────────────────────────────────────────────────
   // SESSION PHASE
   // ─────────────────────────────────────────────────────────────────────────
+  const lastAssistantMsg = [...messages].reverse().find(m => m.role === 'assistant');
+  const currentEmotion = lastAssistantMsg ? (lastAssistantMsg.content.match(/^\*([^*]+)\*/)?.[1] || '') : '';
+
   return (
     <div className="flex flex-col animate-slide-up"
       style={{
@@ -584,7 +609,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
 
       {/* ── Tutor Avatar Status Strip (New Redesigned Element) ──────────── */}
       <div className="flex-shrink-0 py-3 border-b border-white/5 bg-white/[0.02] flex justify-center items-center">
-        <TutorAvatar status={aiStatus} />
+        <TutorAvatar status={aiStatus} emotion={currentEmotion} />
       </div>
 
       {/* ── Chat area ───────────────────────────────────────────────────── */}
