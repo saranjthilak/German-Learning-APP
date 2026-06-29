@@ -85,7 +85,13 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
   }, [isSupported]);
 
   const stop = useCallback(() => {
-    recognitionRef.current?.stop();
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.warn('Error stopping speech recognition:', e);
+      }
+    }
     setIsListening(false);
     setInterimTranscript('');
   }, []);
@@ -98,6 +104,15 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
     setError(null);
     setTranscript('');
     setInterimTranscript('');
+
+    // Safely abort any existing recognition instance to free up the microphone resource immediately
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (e) {
+        console.warn('Error aborting previous speech recognition:', e);
+      }
+    }
 
     const rec = buildRecognition()!;
     recognitionRef.current = rec;
@@ -128,7 +143,13 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
       setIsListening(false);
     };
 
-    rec.start();
+    try {
+      rec.start();
+    } catch (e) {
+      console.error('Failed to start speech recognition:', e);
+      // Try recreating the session on failure
+      setIsListening(false);
+    }
   }, [isSupported, buildRecognition]);
 
   const reset = useCallback(() => {
