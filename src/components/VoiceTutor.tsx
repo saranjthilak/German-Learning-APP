@@ -235,7 +235,13 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
     isMyTurnRef.current = true;
     resetTranscript();
     latestTranscript.current = '';
-    startListening();
+    // Give the browser 350ms to finish releasing the TTS audio output
+    // before switching audio hardware to microphone input mode
+    setTimeout(() => {
+      if (isMyTurnRef.current) {
+        startListening();
+      }
+    }, 350);
   }, [resetTranscript, startListening]);
 
   // ── AI response handler ──────────────────────────────────────────────────
