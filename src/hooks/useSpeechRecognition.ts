@@ -1,5 +1,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// useSpeechRecognition — wraps the Web Speech API for continuous listening
+// useSpeechRecognition — wraps the Web Speech API
+//
+// KEY DESIGN: We keep ONE SpeechRecognition session alive for the entire
+// component lifecycle (keepAlive mode). Instead of destroying and rebuilding the
+// session each turn — which takes 500ms-2s of browser init time — we use an
+// "active" gate flag. When the gate is open, transcripts accumulate. When closed,
+// they are dropped. This eliminates the "activating…" stuck state entirely.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -61,18 +67,23 @@ export const hasEnglishWords = (text: string): boolean => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
-  const [transcript, setTranscript]             = useState('');
+  const [transcript, setTranscript]               = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
-  const [isListening, setIsListening]           = useState(false);
-  const [error, setError]                       = useState<SpeechError | null>(null);
+  const [isListening, setIsListening]             = useState(false);
+  const [error, setError]                         = useState<SpeechError | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
-  const isSupported    = typeof window !== 'undefined' &&
+  const recognitionRef  = useRef<any>(null);
+  const isActiveRef     = useRef(false);  // gate: only accumulate when open
+  const isStartedRef    = useRef(false);  // track whether rec.start() was called
+
+  const isSupported = typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
-  const buildRecognition = useCallback(() => {
-    if (!isSupported) return null;
+  // ── Build and boot a single persistent recognition session ────────────────
+  const initRecognition = useCallback(() => {
+    if (!isSupported || recognitionRef.current) return;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,46 +92,29 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
     rec.interimResults  = true;
     rec.lang            = 'de-DE';
     rec.maxAlternatives = 1;
-    return rec;
-  }, [isSupported]);
 
-  const stop = useCallback(() => {
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {
-        console.warn('Error stopping speech recognition:', e);
+    rec.onstart = () => {
+      isStartedRef.current = true;
+    };
+
+    // Auto-restart on end if session should still be alive
+    rec.onend = () => {
+      isStartedRef.current = false;
+      if (isActiveRef.current) {
+        // The browser stopped on its own (timeout etc.) — restart immediately
+        try {
+          rec.start();
+        } catch (_) { /* ignore */ }
+      } else {
+        setIsListening(false);
+        setInterimTranscript('');
       }
-    }
-    setIsListening(false);
-    setInterimTranscript('');
-  }, []);
-
-  const start = useCallback(() => {
-    if (!isSupported) {
-      setError('not-supported');
-      return;
-    }
-    setError(null);
-    setTranscript('');
-    setInterimTranscript('');
-
-    // Safely abort any existing recognition instance to free up the microphone resource immediately
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-      } catch (e) {
-        console.warn('Error aborting previous speech recognition:', e);
-      }
-    }
-
-    const rec = buildRecognition()!;
-    recognitionRef.current = rec;
-
-    rec.onstart = () => setIsListening(true);
-    rec.onend   = () => setIsListening(false);
+    };
 
     rec.onresult = (e: any) => {
+      // Drop results when gate is closed (Lena is speaking / thinking)
+      if (!isActiveRef.current) return;
+
       let interim = '';
       let final   = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -136,21 +130,59 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
     };
 
     rec.onerror = (e: any) => {
-      if (e.error === 'not-allowed')  setError('permission-denied');
-      else if (e.error === 'no-speech') setError('no-speech');
+      if (e.error === 'not-allowed')    setError('permission-denied');
+      else if (e.error === 'no-speech') return; // ignore, auto-restarts via onend
       else if (e.error === 'network')   setError('network');
+      else if (e.error === 'aborted')   return; // expected on stop
       else setError('unknown');
-      setIsListening(false);
     };
 
+    recognitionRef.current = rec;
+
+    // Start once — will auto-restart in onend
     try {
       rec.start();
+      isStartedRef.current = true;
     } catch (e) {
       console.error('Failed to start speech recognition:', e);
-      // Try recreating the session on failure
-      setIsListening(false);
     }
-  }, [isSupported, buildRecognition]);
+  }, [isSupported]);
+
+  // ── Open the gate — user can now speak ───────────────────────────────────
+  const start = useCallback(() => {
+    if (!isSupported) {
+      setError('not-supported');
+      return;
+    }
+    setError(null);
+    setTranscript('');
+    setInterimTranscript('');
+
+    isActiveRef.current = true;
+    setIsListening(true);
+
+    if (!recognitionRef.current) {
+      initRecognition();
+    } else if (!isStartedRef.current) {
+      // Session was stopped by browser; restart it
+      try {
+        recognitionRef.current.start();
+        isStartedRef.current = true;
+      } catch (e) {
+        console.warn('Could not restart recognition:', e);
+      }
+    }
+    // If already running, just opening the gate is enough — results will flow in
+  }, [isSupported, initRecognition]);
+
+  // ── Close the gate — suppress incoming speech ─────────────────────────────
+  const stop = useCallback(() => {
+    isActiveRef.current = false;
+    setIsListening(false);
+    setInterimTranscript('');
+    // We intentionally do NOT call rec.stop() — we keep the session warm
+    // so the next turn starts instantly with no browser init delay
+  }, []);
 
   const reset = useCallback(() => {
     setTranscript('');
@@ -158,9 +190,15 @@ const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
     setError(null);
   }, []);
 
+  // ── Tear down the session when the component unmounts ─────────────────────
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return () => (recognitionRef.current as any)?.stop();
+    return () => {
+      isActiveRef.current = false;
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (_) { /* ignore */ }
+        recognitionRef.current = null;
+      }
+    };
   }, []);
 
   return { transcript, interimTranscript, isListening, isSupported, error, start, stop, reset };
