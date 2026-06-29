@@ -12,11 +12,15 @@ export interface UseSpeechSynthesisReturn {
   voices: SpeechSynthesisVoice[];
 }
 
+// Keep a module-level reference to prevent garbage collection of utterances while they are speaking (legendary Chrome/Safari bug)
+const activeUtterances = new Set<SpeechSynthesisUtterance>();
+
 const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voices, setVoices]         = useState<SpeechSynthesisVoice[]>([]);
   const queueRef                    = useRef<SpeechSynthesisUtterance[]>([]);
   const isSupported                 = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  const fallbackTimerRef            = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load available voices (async on some browsers)
   useEffect(() => {
@@ -51,6 +55,8 @@ const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
 
   const speak = useCallback(
     (text: string, lang: 'de-DE' | 'en-US' = 'de-DE', onEnd?: () => void) => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
+      
       if (!isSupported || !text.trim()) {
         onEnd?.();
         return;
@@ -58,6 +64,7 @@ const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
 
       // Cancel any ongoing speech
       window.speechSynthesis.cancel();
+      activeUtterances.clear();
 
       const utterance  = new SpeechSynthesisUtterance(text);
       utterance.lang   = lang;
@@ -68,16 +75,35 @@ const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
       const voice = getBestVoice(lang);
       if (voice) utterance.voice = voice;
 
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend   = () => {
+      // Cache the utterance globally to prevent GC
+      activeUtterances.add(utterance);
+
+      const triggerEnd = () => {
+        if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
+        activeUtterances.delete(utterance);
         setIsSpeaking(false);
         queueRef.current = [];
-        onEnd?.();   // ← notify caller when speech is done
+        onEnd?.();
+      };
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend   = () => {
+        triggerEnd();
       };
       utterance.onerror = () => {
-        setIsSpeaking(false);
-        onEnd?.();   // ← also fire on error so UI doesn't get stuck
+        triggerEnd();
       };
+
+      // Dual safety: calculate estimated speaking duration to trigger fallback in case onend never fires
+      const estimatedWords = text.split(/\s+/).length;
+      const estimatedDurationMs = (estimatedWords * 650) + 2000; // 650ms per word + 2s padding
+
+      fallbackTimerRef.current = setTimeout(() => {
+        if (activeUtterances.has(utterance)) {
+          console.warn("SpeechSynthesis onend failed to fire. Recovering via fallback timer.");
+          triggerEnd();
+        }
+      }, estimatedDurationMs);
 
       window.speechSynthesis.speak(utterance);
     },
@@ -85,14 +111,19 @@ const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
   );
 
   const stop = useCallback(() => {
+    if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
     if (!isSupported) return;
     window.speechSynthesis.cancel();
+    activeUtterances.clear();
     queueRef.current = [];
     setIsSpeaking(false);
   }, [isSupported]);
 
   useEffect(() => {
-    return () => { if (isSupported) window.speechSynthesis.cancel(); };
+    return () => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
+      if (isSupported) window.speechSynthesis.cancel();
+    };
   }, [isSupported]);
 
   return { speak, stop, isSpeaking, isSupported, voices };
