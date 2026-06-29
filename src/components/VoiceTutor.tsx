@@ -214,7 +214,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [phase]);
 
-  // ── Silence detection — auto-send after 5s of silence
+  // ── Silence detection — auto-send after 2s of silence
   useEffect(() => {
     if (!isListening || !isMyTurn) return;
     if (silenceTimer.current) clearTimeout(silenceTimer.current);
@@ -224,7 +224,7 @@ const VoiceTutor: React.FC<VoiceTutorProps> = ({ onClose }) => {
       if (current) {
         handleUserSubmit(current);
       }
-    }, 5000);
+    }, 2000);
     return () => { if (silenceTimer.current) clearTimeout(silenceTimer.current); };
   }, [transcript, isListening, isMyTurn]);
 
