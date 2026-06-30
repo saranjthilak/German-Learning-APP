@@ -83,8 +83,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
 
 
       {/* Game Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}
-        className="sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {games.map((game) => (
           <button
             key={game.id}
@@ -94,19 +93,12 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
             onMouseLeave={() => setHovered(null)}
             style={{
               background: game.gradient,
-              border: `1.5px solid ${hovered === game.id ? game.border : 'transparent'}`,
-              borderRadius: 24,
-              padding: '24px 16px',
-              color: 'white',
-              cursor: 'pointer',
-              textAlign: 'center',
+              borderColor: hovered === game.id ? game.border : 'transparent',
               boxShadow: hovered === game.id
                 ? `0 12px 32px ${game.glow}`
                 : '0 4px 20px rgba(0,0,0,0.15)',
-              position: 'relative',
-              overflow: 'hidden',
             }}
-            className="tactile-btn"
+            className="game-button relative overflow-hidden flex flex-col items-center p-6 rounded-3xl text-white transition-all duration-300 border-2"
           >
             {/* XP badge */}
             <div style={{

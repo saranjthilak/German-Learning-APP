@@ -99,26 +99,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
     (!currentUid && entry.uid === '__guest__');
 
   return (
-    <div className="game-card" style={{
-      background: '#1a1a2e',
-      border: '1px solid rgba(255,255,255,0.07)',
-      padding: 16,
-    }}>
+    <div className="glass-card p-4">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <h3 style={{ fontWeight: 900, fontSize: 16 }}>🏆 Global Leaderboard</h3>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="font-extrabold text-lg">🏆 Global Leaderboard</h3>
         <button
           onClick={() => setLastRefresh(Date.now())}
           title="Refresh"
-          style={{
-            background: 'rgba(255,255,255,0.07)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8, padding: '4px 10px',
-            color: 'white', cursor: 'pointer', fontSize: 14,
-            transition: 'background 0.15s',
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.14)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'; }}
+          className="bg-white/5 border border-white/10 rounded-md px-2.5 py-1 text-white text-sm hover:bg-white/10 transition"
         >
           ↻
         </button>
@@ -126,81 +114,70 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
 
       {/* Error banner */}
       {error && (
-        <p style={{ fontSize: 11, color: '#f87171', marginBottom: 12, opacity: 0.8 }}>
+        <p className="text-xs text-red-400 mb-3 opacity-80">
           ⚠️ {error} Showing local data.
         </p>
       )}
 
       {/* Loading */}
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           {[1, 2, 3].map(i => (
-            <div key={i} style={{
-              height: 58, borderRadius: 14,
-              background: 'rgba(255,255,255,0.05)',
-              animation: 'progress-glow 1.5s ease-in-out infinite',
-            }} />
+            <div key={i} className="h-14 rounded-2xl bg-white/5 animate-pulse" />
           ))}
         </div>
       ) : entries.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '24px 0', opacity: 0.4 }}>
-          <p style={{ fontSize: 32, marginBottom: 8 }}>🏜️</p>
-          <p style={{ fontSize: 13 }}>No players yet — be the first!</p>
+        <div className="text-center py-6 opacity-40">
+          <p className="text-4xl mb-2">🏜️</p>
+          <p className="text-sm">No players yet — be the first!</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="flex flex-col gap-2">
           {entries.map((entry, idx) => {
             const rank = RANK_COLORS[idx];
             const me = isMe(entry);
             return (
               <div
-                key={entry.uid}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '8px 12px', borderRadius: 12,
-                  background: me
-                    ? 'linear-gradient(135deg,rgba(99,179,237,0.15),rgba(168,85,247,0.15))'
-                    : rank
-                    ? rank.bg
-                    : 'rgba(255,255,255,0.04)',
-                  border: me
-                    ? '1.5px solid rgba(99,179,237,0.4)'
-                    : rank
-                    ? `1.5px solid ${rank.border}`
-                    : '1px solid rgba(255,255,255,0.06)',
-                  transition: 'transform 0.15s',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateX(2px)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
-              >
+                  key={entry.uid}
+                  className="flex items-center gap-2.5 p-3 rounded-2xl transition-transform"
+                  style={{
+                    background: me
+                      ? 'linear-gradient(135deg,rgba(99,179,237,0.15),rgba(168,85,247,0.15))'
+                      : rank
+                      ? rank.bg
+                      : 'rgba(255,255,255,0.04)',
+                    border: me
+                      ? '1.5px solid rgba(99,179,237,0.4)'
+                      : rank
+                      ? `1.5px solid ${rank.border}`
+                      : '1px solid rgba(255,255,255,0.06)',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateX(2px)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
+                >
                 {/* Rank */}
-                <div style={{
-                  fontSize: rank ? 18 : 13, fontWeight: 900,
-                  width: 24, textAlign: 'center', flexShrink: 0,
-                  color: rank ? 'white' : 'rgba(255,255,255,0.4)',
-                }}>
+                <div className="font-extrabold w-6 text-center flex-shrink-0" style={{
+                    fontSize: rank ? 18 : 13,
+                    color: rank ? 'white' : 'rgba(255,255,255,0.4)',
+                  }}>
                   {rank ? rank.label : `${idx + 1}`}
                 </div>
 
                 {/* Avatar */}
-                <div style={{
-                  width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                  background: me
-                    ? 'linear-gradient(135deg,#63b3ed,#7c3aed)'
-                    : 'rgba(255,255,255,0.12)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 900,
-                }}>
+                <div className="flex items-center justify-center text-xs font-bold flex-shrink-0 rounded-full" style={{
+                    width: 28, height: 28,
+                    background: me
+                      ? 'linear-gradient(135deg,#63b3ed,#7c3aed)'
+                      : 'rgba(255,255,255,0.12)',
+                  }}>
                   {entry.playerName.slice(0, 2).toUpperCase()}
                 </div>
 
                 {/* Name + level */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{
-                    fontWeight: 800, fontSize: 13,
-                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                    color: me ? '#93c5fd' : 'white',
-                  }}>
+                  <p className="font-bold text-sm truncate" style={{
+                     color: me ? '#93c5fd' : 'white',
+                   }}>
                     {entry.playerName}{me ? ' 👈 you' : ''}
                   </p>
                   <p style={{ fontSize: 11, opacity: 0.5 }}>
@@ -209,11 +186,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ userData, currentUid }) => {
                 </div>
 
                 {/* XP */}
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <p style={{ fontWeight: 900, fontSize: 14, color: '#fbbf24' }}>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-extrabold text-lg text-yellow-400">
                     {entry.totalXP.toLocaleString()}
                   </p>
-                  <p style={{ fontSize: 10, opacity: 0.45 }}>XP</p>
+                  <p className="text-xs opacity-45">XP</p>
                 </div>
               </div>
             );

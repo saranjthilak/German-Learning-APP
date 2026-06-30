@@ -169,7 +169,7 @@ const TypingGame: React.FC<TypingGameProps> = ({ onComplete }) => {
       )}
 
       {/* Question Card */}
-      <div className="game-card bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 p-8 rounded-lg border-2 border-orange-300 dark:border-orange-700">
+      <div className="glass-card p-8 rounded-lg border-2 border-orange-300 dark:border-orange-700">
         <p className="text-center text-gray-600 dark:text-gray-400 mb-4">Type the German word for:</p>
         <h2 className="text-4xl font-bold text-center text-orange-600 dark:text-orange-400">{currentWord.english}</h2>
       </div>
@@ -183,20 +183,20 @@ const TypingGame: React.FC<TypingGameProps> = ({ onComplete }) => {
           onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
           placeholder="Type your answer..."
           autoFocus
-          className="w-full px-6 py-4 text-lg border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:border-primary"
+          className="glass-input"
         />
 
         <div className="flex gap-2">
           <button
             onClick={handleSubmit}
             disabled={!input.trim()}
-            className="button-primary flex-1"
+            className="glow-btn-primary flex-1"
           >
             Check Answer
           </button>
           <button
             onClick={() => SpeechManager.speak(currentWord.german)}
-            className="button-secondary px-4"
+            className="glow-btn-primary"
             title="Listen to pronunciation"
           >
             🔊
