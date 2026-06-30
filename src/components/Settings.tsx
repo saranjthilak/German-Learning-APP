@@ -26,10 +26,8 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="rounded-2xl shadow-2xl max-w-md w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto" style={{
-        background: '#1a1a2e',
-        border: '1px solid rgba(255,255,255,0.1)',
-        color: 'white',
+      <div className="glass-card max-w-md w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto" style={{
+        color: 'var(--color-text-main)',
       }}>
         <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <h2 className="text-xl font-bold">⚙️ Settings</h2>
@@ -48,12 +46,12 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
             type="text"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            className="w-full px-3 py-1.5 border border-gray-600 rounded-lg bg-gray-900 text-white text-sm"
+            className="glass-input"
             placeholder="Enter your name"
           />
           <button
             onClick={handleSaveName}
-            className="button-primary w-full mt-2 py-1.5 text-sm"
+            className="glow-btn-primary w-full mt-2 py-1.5 text-sm"
           >
             Save Name
           </button>
@@ -113,7 +111,7 @@ const Settings: React.FC<SettingsProps> = ({ onClose, userData, onSaveUserData }
           {!showResetConfirm ? (
             <button
               onClick={() => setShowResetConfirm(true)}
-              className="w-full py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 text-xs font-bold rounded-lg transition-colors"
+              className="glow-btn-primary w-full py-2 text-xs"
             >
               🔄 Reset All Data
             </button>

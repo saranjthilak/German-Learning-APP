@@ -1,0 +1,63 @@
+/* src/theme/global.css */
+@import './variables.css';
+
+/* Base resets and font */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+}
+
+/* Input styling */
+.glass-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-main);
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.glass-input:focus {
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Primary button using existing glow-btn */
+.glow-btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* Game button styling */
+.game-button {
+  border-radius: var(--radius-card);
+  padding: 1.5rem 1rem;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.game-button:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.dark .glass-card {
+  background: rgba(0,0,0,0.15);
+}

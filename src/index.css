@@ -3,6 +3,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "./theme/global.css";
 
 /* ── CSS Custom Properties ─────────────────────────────────────────────────── */
 :root {
