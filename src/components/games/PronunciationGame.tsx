@@ -159,7 +159,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
 
   // ── Silence detection — auto-submit after 2s ────────────────────────────
   useEffect(() => {
-    if (!isListening || !isRecordingRef.current) return;
+    if (!isRecordingRef.current) return;
     if (silenceTimer.current) clearTimeout(silenceTimer.current);
 
     silenceTimer.current = setTimeout(() => {
@@ -169,9 +169,11 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
       }
     }, 2000);
 
-    return () => { if (silenceTimer.current) clearTimeout(silenceTimer.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transcript, isListening]);
+    return () => {
+      if (silenceTimer.current) clearTimeout(silenceTimer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcript, interimTranscript]);
 
   // ── Start game ──────────────────────────────────────────────────────────
   const startGame = () => {
