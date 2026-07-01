@@ -131,6 +131,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   const [wordResults, setWordResults] = useState<WordResult[]>([]);
   const [animKey, setAnimKey] = useState(0); // triggers re-animation on word change
   const [submitted, setSubmitted] = useState(false); // prevent double-submit
+  const [isRecording, setIsRecording] = useState(false); // drives silence-detection effect
 
   // ── Speech hooks ─────────────────────────────────────────────────────────
   const {
@@ -145,6 +146,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   const latestTranscript = useRef('');
   const submittedRef = useRef(false);
   const isRecordingRef = useRef(false);
+  const submitHandlerRef = useRef<(text: string) => void>(() => {});
 
   // Keep ref in sync
   useEffect(() => { latestTranscript.current = transcript; }, [transcript]);
@@ -157,23 +159,25 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
     return () => clearInterval(timer);
   }, [gameStarted]);
 
+
   // ── Silence detection — auto-submit after 2s ────────────────────────────
+  // This effect re-runs when isRecording becomes true AND whenever transcript
+  // or interimTranscript changes. It resets a 2-second timer on each update.
   useEffect(() => {
-    if (!isRecordingRef.current) return;
+    if (!isRecording) return;
     if (silenceTimer.current) clearTimeout(silenceTimer.current);
 
     silenceTimer.current = setTimeout(() => {
       const current = latestTranscript.current.trim();
       if (current && !submittedRef.current) {
-        handleSubmitPronunciation(current);
+        submitHandlerRef.current(current);
       }
     }, 2000);
 
     return () => {
       if (silenceTimer.current) clearTimeout(silenceTimer.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transcript, interimTranscript]);
+  }, [isRecording, transcript, interimTranscript]);
 
   // ── Start game ──────────────────────────────────────────────────────────
   const startGame = () => {
@@ -219,6 +223,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
     setSimilarity(null);
     setFeedback(null);
     isRecordingRef.current = true;
+    setIsRecording(true);
     resetTranscript();
     latestTranscript.current = '';
     startListening();
@@ -228,6 +233,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   const handleStopRecording = () => {
     if (silenceTimer.current) clearTimeout(silenceTimer.current);
     isRecordingRef.current = false;
+    setIsRecording(false);
     stopListening();
     const current = latestTranscript.current.trim();
     if (current && !submittedRef.current) {
@@ -241,6 +247,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
     setSubmitted(true);
     submittedRef.current = true;
     isRecordingRef.current = false;
+    setIsRecording(false);
     stopListening();
     if (silenceTimer.current) clearTimeout(silenceTimer.current);
 
@@ -279,6 +286,11 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [words, currentIndex, attempts, streak, stopListening]);
+
+  // Keep submitHandlerRef always pointing to the latest handleSubmitPronunciation
+  useEffect(() => {
+    submitHandlerRef.current = handleSubmitPronunciation;
+  }, [handleSubmitPronunciation]);
 
   // ── Advance to next word ────────────────────────────────────────────────
   const advanceWord = () => {
@@ -430,7 +442,7 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
   // ══════════════════════════════════════════════════════════════════════════
   const currentWord = words[currentIndex];
   const progressPercent = ((currentIndex) / wordsCount) * 100;
-  const isRecording = isListening && isRecordingRef.current;
+  const isActivelyRecording = isListening && isRecording;
   const displayTranscript = transcript || '';
   const displayInterim = interimTranscript || '';
 
@@ -580,32 +592,32 @@ const PronunciationGame: React.FC<PronunciationGameProps> = ({ onComplete }) => 
 
       {/* ── Sound Wave + Recording ────────────────────────────────────── */}
       <div className="text-center space-y-3">
-        <SoundWave active={isRecording} />
+        <SoundWave active={isActivelyRecording} />
 
         <button
           id="record-btn"
-          onClick={isRecording ? handleStopRecording : handleStartRecording}
+          onClick={isActivelyRecording ? handleStopRecording : handleStartRecording}
           disabled={isSpeaking}
           className="w-full py-5 rounded-xl font-black text-base transition-all duration-200 tactile-btn relative overflow-hidden"
           style={{
-            background: isRecording
+            background: isActivelyRecording
               ? 'linear-gradient(135deg, #ef4444, #dc2626)'
               : 'linear-gradient(135deg, #ec4899 0%, #f43f5e 50%, #ec4899 100%)',
             backgroundSize: '200% auto',
             color: 'white',
-            boxShadow: isRecording
+            boxShadow: isActivelyRecording
               ? '0 0 0 0 rgba(239, 68, 68, 0.4)'
               : '0 8px 24px rgba(236, 72, 153, 0.25)',
-            animation: isRecording ? 'mic-pulse 1.5s infinite' : 'none',
+            animation: isActivelyRecording ? 'mic-pulse 1.5s infinite' : 'none',
             cursor: isSpeaking ? 'wait' : 'pointer',
           }}
         >
-          {isRecording ? '⏹ Stop Recording' : '🎤 Click to Speak'}
+          {isActivelyRecording ? '⏹ Stop Recording' : '🎤 Click to Speak'}
         </button>
 
         {/* Hint text */}
         <p className="text-[10px] opacity-30">
-          {isRecording ? 'Listening... will auto-submit after 2s of silence' : 'Tap to start recording your pronunciation'}
+          {isActivelyRecording ? 'Listening... will auto-submit after 2s of silence' : 'Tap to start recording your pronunciation'}
         </p>
       </div>
 
