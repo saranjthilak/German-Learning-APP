@@ -187,15 +187,15 @@ const MatchingGame: React.FC<MatchingGameProps> = ({ onComplete }) => {
       </div>
 
       {/* Feedback */}
-      {feedback && (
-        <div className={`p-4 rounded-lg text-center font-bold text-lg ${
-          feedback.type === 'correct'
-            ? 'bg-green-200 dark:bg-green-900 text-green-800 dark:text-green-200'
-            : 'bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-200'
-        }`}>
-          {feedback.message}
-        </div>
-      )}
+      {/* Feedback placeholder to avoid layout shift */}
+      <div className="h-8 flex items-center justify-center">
+        {feedback && feedback.type === 'correct' && (
+          <span className="text-green-600 text-2xl">✓</span>
+        )}
+        {feedback && feedback.type === 'incorrect' && (
+          <span className="text-red-600 text-2xl">✗</span>
+        )}
+      </div>
 
       {/* Game Board */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
